@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold">
+                Trip Details
+            </h2>
+
+            <p class="text-muted">
+                Complete information about the selected trip.
+            </p>
+
+        </div>
+
+        <a href="/trips" class="btn btn-secondary">
+
+            Back to Trips
+
+        </a>
+
+    </div>
+
+    {% if trip %}
+
+    <div class="row">
+
+        <!-- Left Side -->
+
+        <div class="col-lg-8">
+
+            <div class="card shadow border-0 mb-4">
+
+                <div class="card-header bg-primary text-white">
+
+                    <h5 class="mb-0">
+
+                        General Information
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <strong>Trip ID</strong>
+
+                            <p>{{ trip.id }}</p>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <strong>Status</strong>
+
+                            <p>
+
+                                {% if trip.status=="Draft" %}
+
+                                <span class="badge bg-warning">
+
+                                    Draft
+
+                                </span>
+
+                                {% elif trip.status=="Dispatched" %}
+
+                                <span class="badge bg-primary">
+
+                                    Dispatched
+
+                                </span>
+
+                                {% elif trip.status=="Completed" %}
+
+                                <span class="badge bg-success">
+
+                                    Completed
+
+                                </span>
+
+                                {% else %}
+
+                                <span class="badge bg-danger">
+
+                                    Cancelled
+
+                                </span>
+
+                                {% endif %}
+
+                            </p>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <strong>Source</strong>
+
+                            <p>{{ trip.source }}</p>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <strong>Destination</strong>
+
+                            <p>{{ trip.destination }}</p>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <strong>Distance</strong>
+
+                            <p>{{ trip.distance }}</p>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <strong>Cargo</strong>
+
+                            <p>{{ trip.cargo }}</p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card shadow border-0">
+
+                <div class="card-header bg-success text-white">
+
+                    <h5 class="mb-0">
+
+                        Driver & Vehicle
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <strong>Driver</strong>
+
+                            <p>{{ trip.driver }}</p>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <strong>Vehicle</strong>
+
+                            <p>{{ trip.vehicle }}</p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Right Side -->
+
+        <div class="col-lg-4">
+
+            <div class="card shadow border-0">
+
+                <div class="card-header bg-dark text-white">
+
+                    <h5 class="mb-0">
+
+                        Actions
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <a href="/trip/create"
+                       class="btn btn-primary w-100 mb-3">
+
+                        Create New Trip
+
+                    </a>
+
+                    <a href="/trip/dispatch/{{trip.id}}"
+                       class="btn btn-warning w-100 mb-3">
+
+                        Dispatch
+
+                    </a>
+
+                    <a href="/trip/complete/{{trip.id}}"
+                       class="btn btn-success w-100 mb-3">
+
+                        Complete
+
+                    </a>
+
+                    <a href="/trip/cancel/{{trip.id}}"
+                       class="btn btn-danger w-100">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% else %}
+
+    <div class="alert alert-danger">
+
+        Trip not found.
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

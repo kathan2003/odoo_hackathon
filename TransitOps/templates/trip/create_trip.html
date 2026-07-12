@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold">Create New Trip</h2>
+
+            <p class="text-muted">
+                Enter trip details below.
+            </p>
+
+        </div>
+
+        <a href="/trips" class="btn btn-secondary">
+            Back
+        </a>
+
+    </div>
+
+    <div class="card shadow border-0">
+
+        <div class="card-body">
+
+            <form method="POST" action="/trip/create">
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+
+                            Trip ID
+
+                        </label>
+
+                        <input
+                                type="text"
+                                class="form-control"
+                                name="trip_id"
+                                placeholder="TRP004"
+                                required>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+
+                            Driver
+
+                        </label>
+
+                        <input
+                                type="text"
+                                class="form-control"
+                                name="driver"
+                                placeholder="Driver Name"
+                                required>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+
+                            Source
+
+                        </label>
+
+                        <input
+                                type="text"
+                                class="form-control"
+                                name="source"
+                                placeholder="Ahmedabad"
+                                required>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+
+                            Destination
+
+                        </label>
+
+                        <input
+                                type="text"
+                                class="form-control"
+                                name="destination"
+                                placeholder="Surat"
+                                required>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+
+                            Vehicle
+
+                        </label>
+
+                        <input
+                                type="text"
+                                class="form-control"
+                                name="vehicle"
+                                placeholder="Truck-05"
+                                required>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+
+                            Cargo
+
+                        </label>
+
+                        <input
+                                type="text"
+                                class="form-control"
+                                name="cargo"
+                                placeholder="500 Kg"
+                                required>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+
+                            Distance
+
+                        </label>
+
+                        <input
+                                type="text"
+                                class="form-control"
+                                name="distance"
+                                placeholder="250 KM"
+                                required>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+
+                            Dispatch Date
+
+                        </label>
+
+                        <input
+                                type="date"
+                                class="form-control">
+
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+
+                        <label class="form-label">
+
+                            Notes
+
+                        </label>
+
+                        <textarea
+                                class="form-control"
+                                rows="4"
+                                placeholder="Additional Notes"></textarea>
+
+                    </div>
+
+                </div>
+
+                <div class="text-end">
+
+                    <button
+                            type="reset"
+                            class="btn btn-outline-secondary">
+
+                        Reset
+
+                    </button>
+
+                    <button
+                            type="submit"
+                            class="btn btn-primary">
+
+                        Save Trip
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

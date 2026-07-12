@@ -1,0 +1,367 @@
+/* ==========================
+   Trip Management Styles
+========================== */
+
+.page-title{
+    font-size:30px;
+    font-weight:700;
+    color:#1f2937;
+}
+
+.page-subtitle{
+    color:#6c757d;
+    margin-bottom:30px;
+}
+
+/* ==========================
+   Cards
+========================== */
+
+.card{
+    border:none;
+    border-radius:15px;
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 15px 35px rgba(0,0,0,.12);
+}
+
+.card-body h6{
+    color:#6c757d;
+    font-size:14px;
+}
+
+.card-body h2{
+    font-size:32px;
+    font-weight:700;
+}
+
+/* ==========================
+   Buttons
+========================== */
+
+.btn{
+    border-radius:8px;
+    font-weight:500;
+}
+
+.btn-primary{
+    background:#2563eb;
+    border:none;
+}
+
+.btn-primary:hover{
+    background:#1d4ed8;
+}
+
+.btn-success{
+    border:none;
+}
+
+.btn-danger{
+    border:none;
+}
+
+.btn-info{
+    color:white;
+}
+
+/* ==========================
+   Table
+========================== */
+
+.table{
+    border-radius:12px;
+    overflow:hidden;
+}
+
+.table thead{
+    background:#111827;
+    color:white;
+}
+
+.table th{
+    font-weight:600;
+    padding:16px;
+}
+
+.table td{
+    vertical-align:middle;
+    padding:15px;
+}
+
+.table tbody tr{
+    transition:.2s;
+}
+
+.table tbody tr:hover{
+    background:#f8fafc;
+}
+
+/* ==========================
+   Badges
+========================== */
+
+.badge{
+    padding:8px 12px;
+    font-size:12px;
+    border-radius:20px;
+}
+
+/* ==========================
+   Search
+========================== */
+
+.form-control,
+.form-select{
+    border-radius:10px;
+    height:45px;
+}
+
+.form-control:focus,
+.form-select:focus{
+    box-shadow:none;
+    border-color:#2563eb;
+}
+
+/* ==========================
+   Dashboard Cards
+========================== */
+
+.dashboard-card{
+
+    padding:20px;
+
+    background:white;
+
+    border-radius:15px;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+}
+
+.dashboard-card h6{
+
+    color:#6b7280;
+
+}
+
+.dashboard-card h2{
+
+    font-size:34px;
+
+    font-weight:700;
+
+}
+
+/* ==========================
+   Action Buttons
+========================== */
+
+.action-btn{
+
+    width:36px;
+
+    height:36px;
+
+    border-radius:8px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    margin-right:5px;
+
+}
+
+.action-btn i{
+
+    font-size:15px;
+
+}
+
+/* ==========================
+   Status Colors
+========================== */
+
+.bg-draft{
+
+    background:#ffc107!important;
+
+}
+
+.bg-dispatched{
+
+    background:#2563eb!important;
+
+}
+
+.bg-completed{
+
+    background:#16a34a!important;
+
+}
+
+.bg-cancelled{
+
+    background:#dc2626!important;
+
+}
+
+/* ==========================
+   Responsive
+========================== */
+
+@media(max-width:991px){
+
+.sidebar{
+
+    width:80px;
+
+}
+
+.sidebar h3{
+
+    display:none;
+
+}
+
+.sidebar a{
+
+    text-align:center;
+
+    padding:15px;
+
+}
+
+.main-content{
+
+    margin-left:0;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.card-body h2{
+
+    font-size:24px;
+
+}
+
+.table{
+
+    font-size:14px;
+
+}
+
+.page-title{
+
+    font-size:24px;
+
+}
+
+.btn{
+
+    font-size:13px;
+
+}
+
+}
+
+/* ==========================
+   Animation
+========================== */
+
+.card{
+
+    animation:fadeIn .5s ease;
+
+}
+
+@keyframes fadeIn{
+
+from{
+
+opacity:0;
+
+transform:translateY(20px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+/* ==========================
+   Create Trip Form
+========================== */
+
+form label{
+
+    font-weight:600;
+
+    color:#374151;
+
+}
+
+form .form-control{
+
+    border-radius:10px;
+
+    padding:12px;
+
+}
+
+form textarea{
+
+    resize:none;
+
+}
+
+form .btn{
+
+    min-width:120px;
+
+}
+
+/* ==========================
+   Trip Details
+========================== */
+
+.card-header{
+
+    font-weight:600;
+
+}
+
+.card-body strong{
+
+    color:#374151;
+
+}
+
+.card-body p{
+
+    margin-bottom:15px;
+
+    font-size:15px;
+
+}
+
+.btn{
+
+    border-radius:8px;
+
+}

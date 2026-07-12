@@ -1,0 +1,342 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold">
+                Trip Management
+            </h2>
+
+            <p class="text-muted mb-0">
+                Manage and monitor all transport trips
+            </p>
+
+        </div>
+
+        <a href="/trip/create" class="btn btn-primary">
+
+            <i class="bi bi-plus-circle"></i>
+
+            Create Trip
+
+        </a>
+
+    </div>
+
+    <!-- KPI Cards -->
+
+    <div class="row mb-4">
+
+        <div class="col-lg-3 col-md-6 mb-3">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Total Trips
+                    </h6>
+
+                    <h2>
+                        {{ trips|length }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+
+                        Active Trips
+
+                    </h6>
+
+                    <h2 class="text-primary">
+
+                        {{ trips|selectattr("status","equalto","Dispatched")|list|length }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+
+                        Completed
+
+                    </h6>
+
+                    <h2 class="text-success">
+
+                        {{ trips|selectattr("status","equalto","Completed")|list|length }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+
+                        Draft
+
+                    </h6>
+
+                    <h2 class="text-warning">
+
+                        {{ trips|selectattr("status","equalto","Draft")|list|length }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Search -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-4">
+
+                    <input
+                            type="text"
+                            class="form-control"
+                            id="searchInput"
+                            placeholder="Search Trip">
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <select
+                            class="form-select"
+                            id="statusFilter">
+
+                        <option value="">All Status</option>
+
+                        <option>Draft</option>
+
+                        <option>Dispatched</option>
+
+                        <option>Completed</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Table -->
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table
+                        class="table table-hover align-middle"
+                        id="tripTable">
+
+                    <thead class="table-dark">
+
+                    <tr>
+
+                        <th>Trip ID</th>
+
+                        <th>Source</th>
+
+                        <th>Destination</th>
+
+                        <th>Vehicle</th>
+
+                        <th>Driver</th>
+
+                        <th>Cargo</th>
+
+                        <th>Status</th>
+
+                        <th>Actions</th>
+
+                    </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    {% for trip in trips %}
+
+                    <tr>
+
+                        <td>
+
+                            {{ trip.id }}
+
+                        </td>
+
+                        <td>
+
+                            {{ trip.source }}
+
+                        </td>
+
+                        <td>
+
+                            {{ trip.destination }}
+
+                        </td>
+
+                        <td>
+
+                            {{ trip.vehicle }}
+
+                        </td>
+
+                        <td>
+
+                            {{ trip.driver }}
+
+                        </td>
+
+                        <td>
+
+                            {{ trip.cargo }}
+
+                        </td>
+
+                        <td>
+
+                            {% if trip.status=="Draft" %}
+
+                            <span class="badge bg-warning">
+
+                                Draft
+
+                            </span>
+
+                            {% elif trip.status=="Dispatched" %}
+
+                            <span class="badge bg-primary">
+
+                                Dispatched
+
+                            </span>
+
+                            {% elif trip.status=="Completed" %}
+
+                            <span class="badge bg-success">
+
+                                Completed
+
+                            </span>
+
+                            {% else %}
+
+                            <span class="badge bg-danger">
+
+                                Cancelled
+
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+    <button
+        class="btn btn-info btn-sm"
+        onclick="viewTrip('{{ trip.id }}')">
+
+        <i class="bi bi-eye"></i>
+
+    </button>
+
+    <button
+        class="btn btn-primary btn-sm"
+        onclick="dispatchTrip('{{ trip.id }}')">
+
+        <i class="bi bi-truck"></i>
+
+    </button>
+
+    <button
+        class="btn btn-success btn-sm"
+        onclick="completeTrip('{{ trip.id }}')">
+
+        <i class="bi bi-check-circle"></i>
+
+    </button>
+
+    <button
+        class="btn btn-danger btn-sm"
+        onclick="cancelTrip('{{ trip.id }}')">
+
+        <i class="bi bi-x-circle"></i>
+
+    </button>
+
+</td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/trip.js') }}"></script>
+
+{% endblock %}
