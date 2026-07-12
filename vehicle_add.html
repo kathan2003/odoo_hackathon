@@ -126,7 +126,7 @@
 
 <div class="container">
 
-<a class="navbar-brand" href="vehicles.html">
+<a class="navbar-brand" href="/">
 
 <i class="bi bi-truck"></i>
 
@@ -150,7 +150,9 @@ Add Vehicle
 
 </h2>
 
-<form>
+<!-- Flash messages will appear here after connecting Flask backend -->
+
+<form method="POST">
 
 <div class="row">
 
@@ -161,11 +163,7 @@ Registration Number
 <span class="required">*</span>
 </label>
 
-<input
-type="text"
-class="form-control"
-placeholder="GJ01AB1234"
-required>
+<input type="text" name="registration_number" class="form-control" placeholder="GJ01AB1234" required>
 
 </div>
 
@@ -175,10 +173,7 @@ required>
 Vehicle Model
 </label>
 
-<input
-type="text"
-class="form-control"
-placeholder="Tata Ace">
+<input type="text" name="model" class="form-control" placeholder="Tata Ace" required>
 
 </div>
 
@@ -188,14 +183,14 @@ placeholder="Tata Ace">
 Vehicle Type
 </label>
 
-<select class="form-select">
+<select name="vehicle_type" class="form-select" required>
 
-<option>Select Type</option>
-<option>Mini Truck</option>
-<option>Truck</option>
-<option>Container</option>
-<option>Bus</option>
-<option>Van</option>
+    <option value="">Select Type</option>
+    <option value="Mini Truck">Mini Truck</option>
+    <option value="Truck">Truck</option>
+    <option value="Container">Container</option>
+    <option value="Bus">Bus</option>
+    <option value="Van">Van</option>
 
 </select>
 
@@ -207,10 +202,7 @@ Vehicle Type
 Capacity (KG)
 </label>
 
-<input
-type="number"
-class="form-control"
-placeholder="1000">
+<input type="number" name="capacity" class="form-control" placeholder="1000" required>
 
 </div>
 
@@ -220,10 +212,7 @@ placeholder="1000">
 Current Odometer (KM)
 </label>
 
-<input
-type="number"
-class="form-control"
-placeholder="45000">
+<input type="number" name="odometer" class="form-control" placeholder="45000" required>
 
 </div>
 
@@ -233,10 +222,7 @@ placeholder="45000">
 Acquisition Cost (₹)
 </label>
 
-<input
-type="number"
-class="form-control"
-placeholder="750000">
+<input type="number" name="acquisition_cost" class="form-control" placeholder="750000" required>    
 
 </div>
 
@@ -246,12 +232,12 @@ placeholder="750000">
 Vehicle Status
 </label>
 
-<select class="form-select">
+<select name="status" class="form-select">
 
-<option>Available</option>
-<option>On Trip</option>
-<option>In Shop</option>
-<option>Retired</option>
+    <option value="Available">Available</option>
+    <option value="On Trip">On Trip</option>
+    <option value="In Shop">In Shop</option>
+    <option value="Retired">Retired</option>
 
 </select>
 
@@ -263,34 +249,24 @@ Vehicle Status
 
 <div class="d-flex gap-2">
 
-<button type="submit" class="btn btn-save">
+    <button type="submit" class="btn btn-save">
+        <i class="bi bi-check-circle-fill"></i>
+        Save Vehicle
+    </button>
 
-<i class="bi bi-check-circle-fill"></i>
+    <button type="reset" class="btn btn-reset">
+        <i class="bi bi-arrow-clockwise"></i>
+        Reset
+    </button>
 
-Save Vehicle
-
-</button>
-
-<button type="reset" class="btn btn-reset">
-
-<i class="bi bi-arrow-clockwise"></i>
-
-Reset
-
-</button>
-
-<a href="vehicles.html" class="btn btn-back">
-
-<i class="bi bi-arrow-left-circle"></i>
-
-Back
-
-</a>
+    <a href="/vehicles" class="btn btn-back">
+        <i class="bi bi-arrow-left-circle"></i>
+        Back
+    </a>
 
 </div>
 
 </form>
-
 </div>
 
 </div>
