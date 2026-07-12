@@ -1,209 +1,1130 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-{% block content %}
-<div class="page-heading-row">
-    <div>
-        <span class="eyebrow">Live overview</span>
-        <h2>Fleet performance today</h2>
-        <p>Monitor vehicles, drivers, costs and utilization from one control centre.</p>
-    </div>
-    <div class="page-actions">
-        <button class="btn btn-soft" type="button"><i class="bi bi-download"></i> Export</button>
-        <button class="btn btn-gradient" type="button"><i class="bi bi-plus-lg"></i> Add Vehicle</button>
-    </div>
+<title>TransitOps | Dashboard</title>
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:#0f172a;
+    color:white;
+}
+
+/* ================= Sidebar ================= */
+
+.sidebar{
+
+    position:fixed;
+
+    left:0;
+
+    top:0;
+
+    width:260px;
+
+    height:100vh;
+
+    background:#1e293b;
+
+    border-right:1px solid #334155;
+
+    overflow-y:auto;
+
+}
+
+.logo{
+
+    padding:25px;
+
+    text-align:center;
+
+    font-size:28px;
+
+    color:#38bdf8;
+
+    font-weight:bold;
+
+    border-bottom:1px solid #334155;
+
+}
+
+.logo i{
+
+    font-size:35px;
+
+}
+
+.menu{
+
+    margin-top:15px;
+
+}
+
+.menu a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    color:#cbd5e1;
+
+    text-decoration:none;
+
+    padding:14px 20px;
+
+    margin:8px 12px;
+
+    border-radius:10px;
+
+    transition:.3s;
+
+    font-size:16px;
+
+}
+
+.menu a:hover{
+
+    background:#38bdf8;
+
+    color:white;
+
+}
+
+.menu .active{
+
+    background:#38bdf8;
+
+    color:white;
+
+}
+
+.menu i{
+
+    font-size:18px;
+
+}
+
+/* ================= Main ================= */
+
+.main{
+
+    margin-left:260px;
+
+}
+
+/* ================= Navbar ================= */
+
+.topbar{
+
+    background:#1e293b;
+
+    padding:18px 30px;
+
+    border-bottom:1px solid #334155;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.search-box{
+
+    width:280px;
+
+}
+
+.search-box input{
+
+    background:#334155;
+
+    border:1px solid #475569;
+
+    color:white;
+
+}
+
+.search-box input::placeholder{
+
+    color:#94a3b8;
+
+}
+
+.search-box input:focus{
+
+    background:#334155;
+
+    color:white;
+
+    border-color:#38bdf8;
+
+    box-shadow:none;
+
+}
+
+.right-icons{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+.icon-btn{
+
+    width:45px;
+
+    height:45px;
+
+    border-radius:50%;
+
+    border:none;
+
+    background:#334155;
+
+    color:white;
+
+    transition:.3s;
+
+}
+
+.icon-btn:hover{
+
+    background:#38bdf8;
+
+}
+
+.profile{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+}
+
+.profile i{
+
+    font-size:35px;
+
+    color:#38bdf8;
+
+}
+
+/* ================= Content ================= */
+
+.content{
+
+    padding:30px;
+
+}
+
+.welcome{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:30px;
+
+}
+
+.welcome h2{
+
+    font-weight:700;
+
+}
+
+.welcome p{
+
+    color:#94a3b8;
+
+    margin-top:5px;
+
+}
+
+.quick-btn{
+
+    background:#38bdf8;
+
+    color:white;
+
+    border:none;
+
+    padding:10px 20px;
+
+    border-radius:10px;
+
+    transition:.3s;
+
+}
+
+.quick-btn:hover{
+
+    background:#0ea5e9;
+
+.dashboard-card{
+
+    background:#1e293b;
+
+    border:1px solid #334155;
+
+    border-radius:15px;
+
+    transition:.3s;
+
+}
+
+.dashboard-card:hover{
+
+    transform:translateY(-5px);
+
+    border-color:#38bdf8;
+
+}
+
+.dashboard-card h6{
+
+    color:#94a3b8;
+
+}
+
+.dashboard-card h2{
+
+    color:#38bdf8;
+
+    font-weight:bold;
+
+}
+
+.card-icon{
+
+    font-size:40px;
+
+    color:#38bdf8;
+
+}
+
+.quick-action{
+
+    background:#1e293b;
+
+    border:1px solid #334155;
+
+    color:white;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.quick-action:hover{
+
+    background:#38bdf8;
+
+    transform:translateY(-5px);
+
+}
+
+.chart-card{
+
+    background:#1e293b;
+
+    border:1px solid #334155;
+
+    border-radius:15px;
+
+    color:white;
+
+}
+
+.activity{
+
+    font-size:15px;
+
+    color:#cbd5e1;
+
+}
+
+.activity p{
+
+    margin-bottom:10px;
+
+    line-height:1.6;
+
+}
+
+.table{
+
+    margin-bottom:0;
+
+}
+
+.table th{
+
+    color:#38bdf8;
+
+}
+
+.table td{
+
+    color:white;
+
+}
+
+footer{
+
+    font-size:15px;
+
+}
+
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- Sidebar -->
+
+<div class="sidebar">
+
+<div class="logo">
+
+<i class="bi bi-truck"></i>
+
+TransitOps
+
 </div>
 
-<div class="row g-4 mb-4">
-    <div class="col-12 col-sm-6 col-xl-3">
-        <article class="kpi-card glass-card accent-blue">
-            <div class="kpi-icon"><i class="bi bi-truck-front-fill"></i></div>
-            <div class="kpi-content">
-                <span>Total Vehicles</span>
-                <strong>{{ stats.total_vehicles }}</strong>
-                <small>{{ stats.active_vehicles }} currently active</small>
-            </div>
-        </article>
-    </div>
-    <div class="col-12 col-sm-6 col-xl-3">
-        <article class="kpi-card glass-card accent-purple">
-            <div class="kpi-icon"><i class="bi bi-people-fill"></i></div>
-            <div class="kpi-content">
-                <span>Drivers</span>
-                <strong>{{ stats.drivers }}</strong>
-                <small>{{ stats.available_drivers }} available today</small>
-            </div>
-        </article>
-    </div>
-    <div class="col-12 col-sm-6 col-xl-3">
-        <article class="kpi-card glass-card accent-orange">
-            <div class="kpi-icon"><i class="bi bi-fuel-pump-fill"></i></div>
-            <div class="kpi-content">
-                <span>Fuel Cost</span>
-                <strong>{{ stats.fuel_cost }}</strong>
-                <small>{{ stats.fuel_change }}</small>
-            </div>
-        </article>
-    </div>
-    <div class="col-12 col-sm-6 col-xl-3">
-        <article class="kpi-card glass-card accent-green">
-            <div class="kpi-icon"><i class="bi bi-speedometer2"></i></div>
-            <div class="kpi-content">
-                <span>Fleet Utilization</span>
-                <strong>{{ stats.fleet_utilization }}</strong>
-                <small>{{ stats.utilization_change }}</small>
-            </div>
-        </article>
-    </div>
+<div class="menu">
+
+<a href="#" class="active">
+
+<i class="bi bi-speedometer2"></i>
+
+Dashboard
+
+</a>
+
+<a href="#">
+
+<i class="bi bi-truck"></i>
+
+Vehicles
+
+</a>
+
+<a href="#">
+
+<i class="bi bi-person-badge"></i>
+
+Drivers
+
+</a>
+
+<a href="#">
+
+<i class="bi bi-map"></i>
+
+Trips
+
+</a>
+
+<a href="#">
+
+<i class="bi bi-tools"></i>
+
+Maintenance
+
+</a>
+
+<a href="#">
+
+<i class="bi bi-fuel-pump"></i>
+
+Fuel Logs
+
+</a>
+
+<a href="#">
+
+<i class="bi bi-currency-dollar"></i>
+
+Expenses
+
+</a>
+
+<a href="#">
+
+<i class="bi bi-file-earmark-bar-graph"></i>
+
+Reports
+
+</a>
+
+<a href="{{ url_for('profile.profile') }}">
+    <i class="bi bi-person"></i> Profile
+</a>
+
+<a href="/logout">
+
+<i class="bi bi-box-arrow-right"></i>
+
+Logout
+
+</a>
+
 </div>
 
-<div class="row g-4 mb-4">
-    <div class="col-12 col-xl-8">
-        <article class="chart-card glass-card h-100">
-            <div class="card-heading">
+</div>
+
+<!-- Main -->
+
+<div class="main">
+
+<!-- Navbar -->
+
+<div class="topbar">
+
+<div class="search-box">
+
+<input
+type="text"
+class="form-control"
+placeholder="Search vehicles, drivers, trips...">
+
+</div>
+
+<div class="right-icons">
+
+<button class="icon-btn">
+
+<i class="bi bi-bell-fill"></i>
+
+</button>
+
+<button class="icon-btn">
+
+<i class="bi bi-moon-stars-fill"></i>
+
+</button>
+
+<div class="profile">
+
+<i class="bi bi-person-circle"></i>
+
+<div>
+
+<b>{{ user.name }}</b>
+
+<br>
+
+<small>{{ user.role }}</small>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Content -->
+
+<div class="content">
+
+<div class="welcome">
+
+<div>
+
+<h2>
+
+👋 Welcome Back,
+{{ user.name }}
+
+</h2>
+
+<p id="todayDate"></p>
+
+</div>
+
+<a href="/vehicles/add" class="btn quick-btn">
+    <i class="bi bi-plus-circle"></i>
+    Quick Action
+</a>
+
+</div>
+
+<!-- PART 2 STARTS HERE -->
+
+
+<!-- KPI Cards -->
+
+<div class="row g-4 mb-5">
+
+    <div class="col-lg-3 col-md-6">
+        <div class="card dashboard-card p-4">
+            <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h3>Fleet Performance</h3>
-                    <p>Trips completed and distance covered</p>
+                    <h6>Total Vehicles</h6>
+                    <h2>45</h2>
                 </div>
-                <span class="status-chip"><i class="bi bi-calendar3"></i> Last 6 months</span>
+                <i class="bi bi-truck card-icon"></i>
             </div>
-            <div class="chart-box chart-box-lg">
-                <canvas id="fleetPerformanceChart"></canvas>
-            </div>
-        </article>
-    </div>
-    <div class="col-12 col-xl-4">
-        <article class="chart-card glass-card h-100">
-            <div class="card-heading">
-                <div>
-                    <h3>Vehicle Status</h3>
-                    <p>Current fleet availability</p>
-                </div>
-            </div>
-            <div class="chart-box chart-box-lg">
-                <canvas id="vehicleStatusChart"></canvas>
-            </div>
-            <div class="chart-summary-row">
-                <span><i class="legend-dot bg-success"></i>Active <strong>41</strong></span>
-                <span><i class="legend-dot bg-warning"></i>Service <strong>4</strong></span>
-                <span><i class="legend-dot bg-danger"></i>Inactive <strong>3</strong></span>
-            </div>
-        </article>
-    </div>
-</div>
-
-<article class="table-card glass-card">
-    <div class="card-heading">
-        <div>
-            <h3>Recent Trips</h3>
-            <p>Latest fleet movement and dispatch status</p>
         </div>
-        <a class="text-link" href="{{ url_for('trips') }}">View all trips <i class="bi bi-arrow-right"></i></a>
     </div>
-    <div class="table-responsive">
-        <table class="table app-table align-middle mb-0">
-            <thead>
-                <tr>
-                    <th>Vehicle</th>
-                    <th>Driver</th>
-                    <th>Route</th>
-                    <th>Distance</th>
-                    <th>Status</th>
-                    <th class="text-end">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for trip in recent_trips %}
-                <tr>
-                    <td><span class="vehicle-cell"><i class="bi bi-truck-front"></i>{{ trip.vehicle }}</span></td>
-                    <td>{{ trip.driver }}</td>
-                    <td>{{ trip.route }}</td>
-                    <td>{{ trip.distance }}</td>
-                    <td>
-                        {% set status_class = 'success' if trip.status == 'Completed' else ('info' if trip.status == 'In Transit' else 'warning') %}
-                        <span class="app-badge badge-{{ status_class }}">{{ trip.status }}</span>
-                    </td>
-                    <td class="text-end"><button class="table-action" type="button" aria-label="View trip"><i class="bi bi-eye"></i></button></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</article>
-{% endblock %}
 
-{% block scripts %}
+    <div class="col-lg-3 col-md-6">
+        <div class="card dashboard-card p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6>Available Vehicles</h6>
+                    <h2>28</h2>
+                </div>
+                <i class="bi bi-check-circle-fill card-icon"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="card dashboard-card p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6>Active Trips</h6>
+                    <h2>18</h2>
+                </div>
+                <i class="bi bi-map-fill card-icon"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="card dashboard-card p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6>Drivers On Duty</h6>
+                    <h2>31</h2>
+                </div>
+                <i class="bi bi-person-badge-fill card-icon"></i>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Quick Actions -->
+
+<div class="row g-4 mb-5">
+
+    <div class="col-md-3">
+        <div class="card quick-action p-4 text-center">
+            <i class="bi bi-plus-circle-fill fs-1"></i>
+            <h5 class="mt-3">Add Vehicle</h5>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card quick-action p-4 text-center">
+            <i class="bi bi-person-plus-fill fs-1"></i>
+            <h5 class="mt-3">Add Driver</h5>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card quick-action p-4 text-center">
+            <i class="bi bi-signpost-fill fs-1"></i>
+            <h5 class="mt-3">Create Trip</h5>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card quick-action p-4 text-center">
+            <i class="bi bi-tools fs-1"></i>
+            <h5 class="mt-3">Maintenance</h5>
+        </div>
+    </div>
+
+</div>
+
+<!-- Charts -->
+
+<div class="row g-4">
+
+    <div class="col-lg-8">
+
+        <div class="card chart-card p-4">
+
+            <h5 class="mb-4">
+
+                Fleet Utilization
+
+            </h5>
+
+            <canvas id="fleetChart"></canvas>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-4">
+
+        <div class="card chart-card p-4">
+
+            <h5 class="mb-4">
+
+                Vehicle Status
+
+            </h5>
+
+            <canvas id="vehicleChart"></canvas>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= Recent Trips ================= -->
+
+<div class="row mt-5">
+
+    <div class="col-lg-8">
+
+        <div class="card chart-card p-4">
+
+            <div class="d-flex justify-content-between mb-3">
+
+                <h4>Recent Trips</h4>
+
+                <button class="btn btn-primary btn-sm">
+                    View All
+                </button>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table table-dark table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Trip ID</th>
+
+                            <th>Vehicle</th>
+
+                            <th>Driver</th>
+
+                            <th>Destination</th>
+
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td>#TR1001</td>
+
+                            <td>MH12AB1234</td>
+
+                            <td>Rahul Patel</td>
+
+                            <td>Ahmedabad</td>
+
+                            <td>
+                                <span class="badge bg-success">
+                                    Completed
+                                </span>
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>#TR1002</td>
+
+                            <td>GJ01XY5678</td>
+
+                            <td>Amit Shah</td>
+
+                            <td>Surat</td>
+
+                            <td>
+                                <span class="badge bg-warning text-dark">
+                                    Running
+                                </span>
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>#TR1003</td>
+
+                            <td>RJ14PQ4589</td>
+
+                            <td>Vikas Kumar</td>
+
+                            <td>Vadodara</td>
+
+                            <td>
+                                <span class="badge bg-danger">
+                                    Cancelled
+                                </span>
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>#TR1004</td>
+
+                            <td>MH20CD4567</td>
+
+                            <td>Rakesh Singh</td>
+
+                            <td>Rajkot</td>
+
+                            <td>
+                                <span class="badge bg-primary">
+                                    Assigned
+                                </span>
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+<!-- ================= Recent Activities ================= -->
+
+    <div class="col-lg-4">
+
+        <div class="card chart-card p-4">
+
+            <h4 class="mb-4">
+
+                Recent Activities
+
+            </h4>
+
+            <div class="activity">
+
+                <p>
+
+                    🚚 Vehicle
+
+                    <b>MH12AB1234</b>
+
+                    assigned for Trip #TR1004
+
+                </p>
+
+                <hr>
+
+                <p>
+
+                    👨 Driver Rahul Patel completed trip successfully.
+
+                </p>
+
+                <hr>
+
+                <p>
+
+                    🔧 Maintenance scheduled for Vehicle GJ01XY5678.
+
+                </p>
+
+                <hr>
+
+                <p>
+
+                    ⛽ Fuel log updated for MH20CD4567.
+
+                </p>
+
+                <hr>
+
+                <p>
+
+                    📄 Monthly Report Generated.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= Upcoming Maintenance ================= -->
+
+<div class="row mt-5">
+
+<div class="col-lg-6">
+
+<div class="card chart-card p-4">
+
+<h4 class="mb-3">
+
+Upcoming Maintenance
+
+</h4>
+
+<table class="table table-dark table-hover">
+
+<thead>
+
+<tr>
+
+<th>Vehicle</th>
+
+<th>Date</th>
+
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>MH12AB1234</td>
+
+<td>20 July 2026</td>
+
+<td>
+
+<span class="badge bg-warning text-dark">
+
+Pending
+
+</span>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>GJ01XY5678</td>
+
+<td>24 July 2026</td>
+
+<td>
+
+<span class="badge bg-danger">
+
+Urgent
+
+</span>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>RJ14PQ4589</td>
+
+<td>28 July 2026</td>
+
+<td>
+
+<span class="badge bg-success">
+
+Scheduled
+
+</span>
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<!-- ================= Fleet Summary ================= -->
+
+<div class="col-lg-6">
+
+<div class="card chart-card p-4">
+
+<h4 class="mb-4">
+
+Fleet Summary
+
+</h4>
+
+<div class="row text-center">
+
+<div class="col-6 mb-4">
+
+<h2 class="text-info">
+
+92%
+
+</h2>
+
+<p>Fleet Utilization</p>
+
+</div>
+
+<div class="col-6 mb-4">
+
+<h2 class="text-success">
+
+₹2.4L
+
+</h2>
+
+<p>Monthly Revenue</p>
+
+</div>
+
+<div class="col-6">
+
+<h2 class="text-warning">
+
+₹48K
+
+</h2>
+
+<p>Fuel Cost</p>
+
+</div>
+
+<div class="col-6">
+
+<h2 class="text-danger">
+
+₹19K
+
+</h2>
+
+<p>Maintenance Cost</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ================= Footer ================= -->
+
+<footer class="text-center mt-5 mb-3 text-secondary">
+
+<hr>
+
+<p>
+
+© 2026 TransitOps Fleet Management System
+
+</p>
+
+</footer>
+
+
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const performanceCanvas = document.getElementById('fleetPerformanceChart');
-    if (performanceCanvas) {
-        const ctx = performanceCanvas.getContext('2d');
-        const gradient = ctx.createLinearGradient(0, 0, 0, 320);
-        gradient.addColorStop(0, 'rgba(37, 99, 235, 0.32)');
-        gradient.addColorStop(1, 'rgba(37, 99, 235, 0.02)');
 
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-                datasets: [
-                    {
-                        label: 'Distance (000 km)',
-                        data: [42, 48, 45, 54, 58, 63],
-                        borderColor: '#2563EB',
-                        backgroundColor: gradient,
-                        fill: true,
-                        tension: 0.42,
-                        borderWidth: 3,
-                        pointRadius: 4,
-                        pointHoverRadius: 6
-                    },
-                    {
-                        label: 'Trips Completed',
-                        data: [118, 126, 121, 139, 148, 156],
-                        borderColor: '#06B6D4',
-                        backgroundColor: 'transparent',
-                        tension: 0.42,
-                        borderWidth: 3,
-                        pointRadius: 4,
-                        yAxisID: 'y1'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: { mode: 'index', intersect: false },
-                plugins: { legend: { position: 'top', align: 'end' } },
-                scales: {
-                    x: { grid: { display: false } },
-                    y: { beginAtZero: false, grid: { color: 'rgba(148,163,184,.16)' } },
-                    y1: { beginAtZero: false, position: 'right', grid: { display: false } }
-                }
-            }
-        });
+const fleetCtx = document.getElementById('fleetChart');
+
+new Chart(fleetCtx,{
+
+    type:'bar',
+
+    data:{
+        labels:['Jan','Feb','Mar','Apr','May','Jun'],
+        datasets:[{
+            label:'Trips',
+            data:[120,190,150,220,260,300]
+        }]
     }
 
-    const statusCanvas = document.getElementById('vehicleStatusChart');
-    if (statusCanvas) {
-        new Chart(statusCanvas, {
-            type: 'doughnut',
-            data: {
-                labels: ['Active', 'In Service', 'Inactive'],
-                datasets: [{
-                    data: [41, 4, 3],
-                    backgroundColor: ['#22C55E', '#F97316', '#EF4444'],
-                    borderWidth: 0,
-                    hoverOffset: 8
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '68%',
-                plugins: { legend: { display: false } }
-            }
-        });
-    }
 });
+
+const vehicleCtx=document.getElementById('vehicleChart');
+
+new Chart(vehicleCtx,{
+
+    type:'pie',
+
+    data:{
+
+        labels:[
+            'Available',
+            'On Trip',
+            'Maintenance'
+        ],
+
+        datasets:[{
+
+            data:[28,12,5]
+
+        }]
+
+    }
+
+});
+
 </script>
-{% endblock %}
+</body>
+</html>
