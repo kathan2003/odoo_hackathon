@@ -3,421 +3,261 @@
 
 <head>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Vehicles</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+
+body{
+    background:#0f172a;
+    color:#e2e8f0;
+    font-family:'Segoe UI',sans-serif;
+}
+
+.navbar{
+    background:#111827;
+    box-shadow:0 5px 15px rgba(0,0,0,.4);
+}
+
+.navbar-brand{
+    color:#60a5fa !important;
+    font-weight:bold;
+    font-size:24px;
+}
+
+.card{
+    background:#1e293b;
+    border:none;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,.4);
+}
+
+h2{
+    color:#60a5fa;
+    font-weight:bold;
+}
+
+.form-control{
+    background:#0f172a;
+    color:white;
+    border:1px solid #334155;
+}
+
+.form-control:focus{
+    background:#0f172a;
+    color:white;
+    border-color:#3b82f6;
+    box-shadow:none;
+}
+
+.table{
+    color:white;
+}
+
+.table thead{
+    background:#334155;
+}
+
+.table-hover tbody tr:hover{
+    background:#293548;
+}
+
+.btn{
+    border-radius:8px;
+    font-weight:600;
+}
+
+.btn-add{
+    background:#10b981;
+    color:white;
+}
+
+.btn-add:hover{
+    background:#059669;
+}
+
+.btn-search{
+    background:#2563eb;
+    color:white;
+}
+
+.btn-search:hover{
+    background:#1d4ed8;
+}
+
+.btn-edit{
+    background:#f59e0b;
+    color:white;
+}
+
+.btn-delete{
+    background:#ef4444;
+    color:white;
+}
+
+.badge{
+    padding:8px 12px;
+    font-size:13px;
+}
 
-    <title>Vehicle Management</title>
-
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: #0F172A;
-            color: #E2E8F0;
-            font-family: "Segoe UI", sans-serif;
-        }
-
-        /* Navbar */
-
-        .navbar {
-            background: #111827;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, .4);
-        }
-
-        .navbar-brand {
-            color: #60A5FA !important;
-            font-size: 25px;
-            font-weight: bold;
-        }
-
-        .nav-link {
-            color: #CBD5E1 !important;
-        }
-
-        .nav-link:hover {
-            color: #60A5FA !important;
-        }
-
-        /* Card */
-
-        .card {
-            background: #1E293B;
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, .35);
-        }
-
-        h2 {
-            color: #60A5FA;
-            font-weight: bold;
-        }
-
-        /* Search */
-
-        .form-control,
-        .form-select {
-
-            background: #0F172A;
-            border: 1px solid #334155;
-            color: white;
-
-        }
-
-        .form-control::placeholder {
-
-            color: #94A3B8;
-
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-
-            background: #0F172A;
-            color: white;
-            border-color: #3B82F6;
-            box-shadow: none;
-
-        }
-
-        .form-select option {
-
-            background: #1E293B;
-            color: white;
-
-        }
-
-        /* Table */
-
-        .table {
-
-            color: white;
-
-        }
-
-        .table thead {
-
-            background: #2563EB;
-
-        }
-
-        .table thead th {
-
-            color: white;
-            border: none;
-
-        }
-
-        .table tbody td {
-
-            background: #1E293B;
-            color: #E2E8F0;
-            border-color: #334155;
-
-        }
-
-        .table-hover tbody tr:hover td {
-
-            background: #334155;
-
-        }
-
-        /* Status */
-
-        .status {
-
-            padding: 6px 15px;
-            border-radius: 30px;
-            font-size: 12px;
-            font-weight: bold;
-
-        }
-
-        .available {
-
-            background: #22C55E;
-            color: white;
-
-        }
-
-        .trip {
-
-            background: #2563EB;
-            color: white;
-
-        }
-
-        .shop {
-
-            background: #F59E0B;
-            color: black;
-
-        }
-
-        .retired {
-
-            background: #EF4444;
-            color: white;
-
-        }
-
-        /* Buttons */
-
-        .btn {
-
-            border-radius: 8px;
-            transition: .3s;
-
-        }
-
-        .btn-success {
-
-            background: #10B981;
-            border: none;
-
-        }
-
-        .btn-success:hover {
-
-            background: #059669;
-            transform: translateY(-2px);
-
-        }
-
-        .btn-primary {
-
-            background: #2563EB;
-            border: none;
-
-        }
-
-        .btn-primary:hover {
-
-            background: #1D4ED8;
-
-        }
-
-        .btn-warning {
-
-            background: #F59E0B;
-            border: none;
-            color: white;
-
-        }
-
-        .btn-warning:hover {
-
-            background: #D97706;
-
-        }
-
-        .btn-danger {
-
-            background: #EF4444;
-            border: none;
-
-        }
-
-        .btn-danger:hover {
-
-            background: #DC2626;
-
-        }
-    </style>
+</style>
 
 </head>
 
 <body>
 
-    <!-- Navbar -->
+<nav class="navbar navbar-expand-lg">
 
-    <nav class="navbar navbar-expand-lg navbar-dark">
+<div class="container">
 
-        <div class="container">
+<a class="navbar-brand" href="/">
+<i class="bi bi-truck"></i>
+TransitOps
+</a>
 
-            <a class="navbar-brand" href="#">
-                <i class="bi bi-truck"></i>
-                TransitOps
-            </a>
+</div>
 
-            <div>
+</nav>
 
-                <a href="vehicles.html" class="btn btn-primary btn-sm">
-                    Vehicles
-                </a>
+<div class="container mt-5">
 
-                <a href="drivers.html" class="btn btn-outline-light btn-sm">
-                    Drivers
-                </a>
+<div class="card p-4">
 
-            </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-        </div>
+<h2>
+<i class="bi bi-truck-front-fill"></i>
+Vehicle Management
+</h2>
 
-    </nav>
+<a href="{{ url_for('vehicle.add_vehicle') }}" class="btn btn-add">
+    <i class="bi bi-plus-circle"></i>
+    Add Vehicle
+</a>
 
-    <!-- Main -->
+</div>
 
-    <div class="container mt-5">
+<form method="GET" action="{{ url_for('vehicle.vehicles') }}">
 
-        <div class="card p-4">
+<div class="row mb-4">
 
-            <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="col-md-8">
 
-                <h2>
-                    <i class="bi bi-truck"></i>
-                    Vehicle Management
-                </h2>
-
-                <a href="vehicle_add.html" class="btn btn-success">
-                    <i class="bi bi-plus-circle"></i>
-                    Add Vehicle
-                </a>
-
-            </div>
-
-            <div class="row mb-4">
-
-                <div class="col-md-5">
-
-                    <input type="text"
-                        class="form-control"
-                        placeholder="Search Registration Number">
-
-                </div>
-
-                <div class="col-md-3">
-
-                    <select class="form-select">
-
-                        <option>All Status</option>
-                        <option>Available</option>
-                        <option>On Trip</option>
-                        <option>In Shop</option>
-                        <option>Retired</option>
-
-                    </select>
-
-                </div>
-
-                <div class="col-md-2">
-
-                    <button class="btn btn-primary w-100">
-                        Search
-                    </button>
-
-                </div>
-
-            </div>
-
-            <div class="table-responsive">
-
-                <table class="table table-hover table-bordered align-middle">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>ID</th>
-                            <th>Registration</th>
-                            <th>Model</th>
-                            <th>Type</th>
-                            <th>Capacity</th>
-                            <th>Odometer</th>
-                            <th>Cost</th>
-                            <th>Status</th>
-                            <th width="150">Action</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        <tr>
-
-                            <td>1</td>
-                            <td>GJ01AB1234</td>
-                            <td>Tata Ace</td>
-                            <td>Mini Truck</td>
-                            <td>1000 Kg</td>
-                            <td>45,000 Km</td>
-                            <td>₹7,50,000</td>
-
-                            <td>
-
-                                <span class="status available">
-                                    Available
-                                </span>
-
-                            </td>
-
-                            <td>
-
-                                <button class="btn btn-warning btn-sm">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-
-                                <button class="btn btn-danger btn-sm">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-
-                            </td>
-
-                        </tr>
-
-                        <tr>
-
-                            <td>2</td>
-                            <td>GJ05XY5678</td>
-                            <td>Ashok Leyland</td>
-                            <td>Truck</td>
-                            <td>5000 Kg</td>
-                            <td>90,000 Km</td>
-                            <td>₹18,00,000</td>
-
-                            <td>
-
-                                <span class="status trip">
-                                    On Trip
-                                </span>
-
-                            </td>
-
-                            <td>
-
-                                <button class="btn btn-warning btn-sm">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-
-                                <button class="btn btn-danger btn-sm">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-
-                            </td>
-
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
+        <input
+            type="text"
+            name="search"
+            class="form-control"
+            placeholder="Search by Registration Number">
 
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="col-md-4">
+
+        <button type="submit" class="btn btn-search w-100">
+            <i class="bi bi-search"></i>
+            Search
+        </button>
+
+    </div>
+
+</div>
+
+</form>
+
+<div class="table-responsive">
+
+<table class="table table-dark table-hover align-middle">
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+<th>Registration</th>
+<th>Model</th>
+<th>Type</th>
+<th>Capacity</th>
+<th>Status</th>
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% if vehicles %}
+
+    {% for vehicle in vehicles %}
+
+    <tr>
+
+        <td>{{ vehicle.id }}</td>
+        <td>{{ vehicle.registration_number }}</td>
+        <td>{{ vehicle.model }}</td>
+        <td>{{ vehicle.vehicle_type }}</td>
+        <td>{{ vehicle.capacity }} KG</td>
+
+        <td>
+
+            {% if vehicle.status == "Available" %}
+                <span class="badge bg-success">{{ vehicle.status }}</span>
+
+            {% elif vehicle.status == "On Trip" %}
+                <span class="badge bg-warning text-dark">{{ vehicle.status }}</span>
+
+            {% elif vehicle.status == "In Shop" %}
+                <span class="badge bg-danger">{{ vehicle.status }}</span>
+
+            {% else %}
+                <span class="badge bg-secondary">{{ vehicle.status }}</span>
+
+            {% endif %}
+
+        </td>
+
+        <td>
+
+            <button class="btn btn-edit btn-sm">
+                <i class="bi bi-pencil-fill"></i>
+            </button>
+
+            <button class="btn btn-delete btn-sm">
+                <i class="bi bi-trash-fill"></i>
+            </button>
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+{% else %}
+
+    <tr>
+        <td colspan="7" class="text-center text-secondary">
+            No vehicles found.
+        </td>
+    </tr>
+
+{% endif %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 
