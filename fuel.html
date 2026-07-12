@@ -8,55 +8,30 @@
         <p>Track refills, identify high-consumption vehicles and improve mileage.</p>
     </div>
     <div class="page-actions">
-        <button class="btn btn-soft" type="button"><i class="bi bi-file-earmark-arrow-down"></i> Export</button>
-        <button class="btn btn-gradient" type="button" data-bs-toggle="modal" data-bs-target="#addFuelModal">
+        <a class="btn btn-soft" href="{{ url_for('export_csv', report_name='fuel') }}"><i class="bi bi-file-earmark-arrow-down"></i> Export</a>
+        <button class="btn btn-gradient" type="button" data-open-add data-bs-toggle="modal" data-bs-target="#fuelModal">
             <i class="bi bi-plus-lg"></i> Add Fuel
         </button>
     </div>
 </div>
 
 <div class="row g-4 mb-4">
-    <div class="col-12 col-sm-6 col-xl-3">
-        <article class="kpi-card glass-card accent-cyan">
-            <div class="kpi-icon"><i class="bi bi-droplet-fill"></i></div>
-            <div class="kpi-content"><span>Total Fuel Used</span><strong>{{ stats.total_used }}</strong><small>Across all fleet vehicles</small></div>
-        </article>
-    </div>
-    <div class="col-12 col-sm-6 col-xl-3">
-        <article class="kpi-card glass-card accent-orange">
-            <div class="kpi-icon"><i class="bi bi-currency-rupee"></i></div>
-            <div class="kpi-content"><span>Fuel Cost</span><strong>{{ stats.fuel_cost }}</strong><small>Current month spend</small></div>
-        </article>
-    </div>
-    <div class="col-12 col-sm-6 col-xl-3">
-        <article class="kpi-card glass-card accent-green">
-            <div class="kpi-icon"><i class="bi bi-speedometer"></i></div>
-            <div class="kpi-content"><span>Average Mileage</span><strong>{{ stats.average_mileage }}</strong><small>Fleet-wide efficiency</small></div>
-        </article>
-    </div>
-    <div class="col-12 col-sm-6 col-xl-3">
-        <article class="kpi-card glass-card accent-purple">
-            <div class="kpi-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
-            <div class="kpi-content"><span>Most Consuming</span><strong class="compact-value">{{ stats.most_consuming_vehicle }}</strong><small>Review route and driving pattern</small></div>
-        </article>
-    </div>
+    <div class="col-12 col-sm-6 col-xl-3"><article class="kpi-card glass-card accent-cyan"><div class="kpi-icon"><i class="bi bi-droplet-fill"></i></div><div class="kpi-content"><span>Total Fuel Used</span><strong>{{ stats.total_used }}</strong><small>Current month, all vehicles</small></div></article></div>
+    <div class="col-12 col-sm-6 col-xl-3"><article class="kpi-card glass-card accent-orange"><div class="kpi-icon"><i class="bi bi-currency-rupee"></i></div><div class="kpi-content"><span>Fuel Cost</span><strong>{{ stats.fuel_cost }}</strong><small>Current month spend</small></div></article></div>
+    <div class="col-12 col-sm-6 col-xl-3"><article class="kpi-card glass-card accent-green"><div class="kpi-icon"><i class="bi bi-speedometer"></i></div><div class="kpi-content"><span>Average Mileage</span><strong>{{ stats.average_mileage }}</strong><small>Fleet-wide efficiency</small></div></article></div>
+    <div class="col-12 col-sm-6 col-xl-3"><article class="kpi-card glass-card accent-purple"><div class="kpi-icon"><i class="bi bi-exclamation-triangle-fill"></i></div><div class="kpi-content"><span>Most Consuming</span><strong class="compact-value">{{ stats.most_consuming_vehicle }}</strong><small>Review route and driving pattern</small></div></article></div>
 </div>
 
 <div class="row g-4 mb-4">
     <div class="col-12 col-xl-8">
         <article class="chart-card glass-card h-100">
-            <div class="card-heading">
-                <div><h3>Fuel Cost Trend</h3><p>Monthly fuel spending versus budget</p></div>
-                <span class="status-chip">Last 6 months</span>
-            </div>
+            <div class="card-heading"><div><h3>Fuel Cost Trend</h3><p>Monthly fuel spending versus budget</p></div><span class="status-chip">Last 6 months</span></div>
             <div class="chart-box"><canvas id="fuelCostChart"></canvas></div>
         </article>
     </div>
     <div class="col-12 col-xl-4">
         <article class="chart-card glass-card h-100">
-            <div class="card-heading">
-                <div><h3>Fuel Distribution</h3><p>Consumption by vehicle category</p></div>
-            </div>
+            <div class="card-heading"><div><h3>Fuel Distribution</h3><p>Consumption by vehicle category</p></div></div>
             <div class="chart-box"><canvas id="fuelDistributionChart"></canvas></div>
         </article>
     </div>
@@ -65,12 +40,14 @@
 <article class="table-card glass-card">
     <div class="card-heading table-heading-wrap">
         <div><h3>Fuel Records</h3><p>Recent refill entries and mileage performance</p></div>
-        <div class="table-tools">
-            <label class="table-search"><i class="bi bi-search"></i><input type="search" placeholder="Search records"></label>
-            <select class="form-select compact-select" aria-label="Filter vehicle">
-                <option selected>All Vehicles</option><option>GJ01AB1234</option><option>GJ01CD5678</option>
+        <form class="table-tools" method="get" action="{{ url_for('fuel') }}">
+            <label class="table-search"><i class="bi bi-search"></i><input type="search" name="q" value="{{ filters.q }}" placeholder="Search records"></label>
+            <select class="form-select compact-select" name="vehicle_id" aria-label="Filter vehicle" onchange="this.form.submit()">
+                <option value="">All Vehicles</option>
+                {% for vehicle in vehicles %}<option value="{{ vehicle.id }}" {% if filters.vehicle_id == vehicle.id %}selected{% endif %}>{{ vehicle.registration_number }}</option>{% endfor %}
             </select>
-        </div>
+            <button class="btn btn-soft" type="submit"><i class="bi bi-funnel"></i> Apply</button>
+        </form>
     </div>
     <div class="table-responsive">
         <table class="table app-table align-middle mb-0">
@@ -78,36 +55,67 @@
             <tbody>
                 {% for record in fuel_records %}
                 <tr>
-                    <td>{{ record.date }}</td>
-                    <td><span class="vehicle-cell"><i class="bi bi-truck-front"></i>{{ record.vehicle }}</span></td>
-                    <td>{{ record.driver }}</td>
-                    <td>{{ record.fuel }}</td>
-                    <td><strong>{{ record.cost }}</strong></td>
-                    <td><span class="app-badge badge-success">{{ record.mileage }}</span></td>
+                    <td>{{ record.fuel_date|datefmt }}</td>
+                    <td><span class="vehicle-cell"><i class="bi bi-truck-front"></i>{{ record.vehicle.registration_number }}</span></td>
+                    <td>{{ record.driver.name if record.driver else '—' }}</td>
+                    <td>{{ record.liters|decimal(2) }} L</td>
+                    <td><strong>{{ record.total_cost|inr }}</strong></td>
+                    <td><span class="app-badge badge-success">{{ record.mileage_kmpl|decimal(2) }} km/L</span></td>
                     <td>{{ record.station }}</td>
-                    <td class="text-end">
-                        <button class="table-action" type="button" aria-label="Edit"><i class="bi bi-pencil"></i></button>
-                        <button class="table-action danger" type="button" aria-label="Delete"><i class="bi bi-trash3"></i></button>
+                    <td class="text-end text-nowrap">
+                        <button
+                            class="table-action edit-fuel"
+                            type="button"
+                            data-edit-id="{{ record.id }}"
+                            data-id="{{ record.id }}"
+                            data-vehicle-id="{{ record.vehicle_id }}"
+                            data-driver-id="{{ record.driver_id or '' }}"
+                            data-trip-id="{{ record.trip_id or '' }}"
+                            data-fuel-date="{{ record.fuel_date.isoformat() }}"
+                            data-liters="{{ record.liters }}"
+                            data-total-cost="{{ record.total_cost }}"
+                            data-odometer-km="{{ record.odometer_km }}"
+                            data-mileage-kmpl="{{ record.mileage_kmpl }}"
+                            data-station="{{ record.station|e }}"
+                            data-invoice-number="{{ (record.invoice_number or '')|e }}"
+                            aria-label="Edit"
+                            title="Edit fuel record"
+                        >
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <form class="inline-delete d-inline-block" method="post" action="{{ url_for('fuel_delete', record_id=record.id) }}" data-confirm="Delete this fuel record? The linked expense will also be removed.">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="table-action danger" type="submit" aria-label="Delete"><i class="bi bi-trash3"></i></button>
+                        </form>
                     </td>
                 </tr>
+                {% else %}
+                <tr><td colspan="8" class="text-center py-4 text-muted">No fuel records found.</td></tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </article>
 
-<div class="modal fade" id="addFuelModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade" id="fuelModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content glass-modal">
             <div class="modal-header"><h5 class="modal-title">Add Fuel Record</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <form>
+            <form method="post" action="{{ url_for('fuel_save') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="id" value="">
                 <div class="modal-body">
                     <div class="row g-3">
-                        <div class="col-12 col-sm-6"><label class="form-label">Vehicle</label><select class="form-select"><option>GJ01AB1234</option><option>GJ01CD5678</option></select></div>
-                        <div class="col-12 col-sm-6"><label class="form-label">Date</label><input class="form-control" type="date"></div>
-                        <div class="col-12 col-sm-6"><label class="form-label">Fuel quantity (L)</label><input class="form-control" type="number" min="0" placeholder="Enter litres"></div>
-                        <div class="col-12 col-sm-6"><label class="form-label">Total cost</label><input class="form-control" type="number" min="0" placeholder="Enter amount"></div>
-                        <div class="col-12"><label class="form-label">Fuel station</label><input class="form-control" type="text" placeholder="Enter fuel station"></div>
+                        <div class="col-12 col-md-4"><label class="form-label">Vehicle *</label><select class="form-select" name="vehicle_id" required><option value="">Select vehicle</option>{% for vehicle in vehicles %}<option value="{{ vehicle.id }}">{{ vehicle.registration_number }} · {{ vehicle.model }}</option>{% endfor %}</select></div>
+                        <div class="col-12 col-md-4"><label class="form-label">Driver</label><select class="form-select" name="driver_id"><option value="">Select driver</option>{% for driver in drivers %}<option value="{{ driver.id }}">{{ driver.name }}</option>{% endfor %}</select></div>
+                        <div class="col-12 col-md-4"><label class="form-label">Trip</label><select class="form-select" name="trip_id"><option value="">Optional trip</option>{% for trip in trips %}<option value="{{ trip.id }}">#{{ trip.id }} · {{ trip.origin }} → {{ trip.destination }}</option>{% endfor %}</select></div>
+                        <div class="col-12 col-md-4"><label class="form-label">Date *</label><input class="form-control" name="fuel_date" type="date" value="{{ today if today is defined else '' }}" required></div>
+                        <div class="col-12 col-md-4"><label class="form-label">Fuel quantity (L) *</label><input class="form-control" name="liters" type="number" step="0.01" min="0.01" placeholder="Enter litres" required></div>
+                        <div class="col-12 col-md-4"><label class="form-label">Total cost *</label><input class="form-control" name="total_cost" type="number" step="0.01" min="0.01" placeholder="Enter amount" required></div>
+                        <div class="col-12 col-md-4"><label class="form-label">Odometer (km)</label><input class="form-control" name="odometer_km" type="number" step="0.01" min="0" value="0"></div>
+                        <div class="col-12 col-md-4"><label class="form-label">Mileage (km/L)</label><input class="form-control" name="mileage_kmpl" type="number" step="0.01" min="0" value="0"></div>
+                        <div class="col-12 col-md-4"><label class="form-label">Invoice number</label><input class="form-control" name="invoice_number" type="text" maxlength="80"></div>
+                        <div class="col-12"><label class="form-label">Fuel station *</label><input class="form-control" name="station" type="text" placeholder="Enter fuel station" maxlength="180" required></div>
                     </div>
                 </div>
                 <div class="modal-footer"><button type="button" class="btn btn-soft" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-gradient">Save Record</button></div>
@@ -120,6 +128,58 @@
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    const modalElement = document.getElementById('fuelModal');
+    const fuelForm = modalElement ? modalElement.querySelector('form') : null;
+    const fuelModal = modalElement && window.bootstrap
+        ? bootstrap.Modal.getOrCreateInstance(modalElement)
+        : null;
+
+    function setFuelField(name, value) {
+        if (!fuelForm) return;
+        const field = fuelForm.querySelector(`[name="${name}"]`);
+        if (field) {
+            field.value = value ?? '';
+            field.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+    }
+
+    function resetFuelForm() {
+        if (!fuelForm || !modalElement) return;
+        fuelForm.reset();
+        setFuelField('id', '');
+        setFuelField('odometer_km', '0');
+        setFuelField('mileage_kmpl', '0');
+
+        const title = modalElement.querySelector('.modal-title');
+        if (title) title.textContent = 'Add Fuel Record';
+    }
+
+    document.querySelector('[data-open-add]')?.addEventListener('click', resetFuelForm);
+
+    document.querySelectorAll('.edit-fuel').forEach(button => {
+        button.addEventListener('click', () => {
+            if (!fuelForm || !fuelModal || !modalElement) return;
+
+            setFuelField('id', button.dataset.id);
+            setFuelField('vehicle_id', button.dataset.vehicleId);
+            setFuelField('driver_id', button.dataset.driverId);
+            setFuelField('trip_id', button.dataset.tripId);
+            setFuelField('fuel_date', button.dataset.fuelDate);
+            setFuelField('liters', button.dataset.liters);
+            setFuelField('total_cost', button.dataset.totalCost);
+            setFuelField('odometer_km', button.dataset.odometerKm);
+            setFuelField('mileage_kmpl', button.dataset.mileageKmpl);
+            setFuelField('station', button.dataset.station);
+            setFuelField('invoice_number', button.dataset.invoiceNumber);
+
+            const title = modalElement.querySelector('.modal-title');
+            if (title) title.textContent = 'Edit Fuel Record';
+
+            fuelModal.show();
+        });
+    });
+
+    const chartData = {{ chart_data|tojson }};
     const costCanvas = document.getElementById('fuelCostChart');
     if (costCanvas) {
         const ctx = costCanvas.getContext('2d');
@@ -128,14 +188,11 @@ document.addEventListener('DOMContentLoaded', () => {
         gradient.addColorStop(1, 'rgba(6, 182, 212, .02)');
         new Chart(ctx, {
             type: 'line',
-            data: {
-                labels: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-                datasets: [
-                    { label: 'Actual Cost (₹ Lakh)', data: [15.2, 16.1, 15.7, 17.4, 17.1, 17.82], borderColor: '#06B6D4', backgroundColor: gradient, fill: true, tension: .42, borderWidth: 3, pointRadius: 4 },
-                    { label: 'Budget (₹ Lakh)', data: [16, 16, 16.5, 17, 17.5, 18], borderColor: '#9333EA', borderDash: [7, 6], tension: .35, borderWidth: 2, pointRadius: 0 }
-                ]
-            },
-            options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'top', align: 'end' } }, scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(148,163,184,.16)' } } } }
+            data: { labels: chartData.cost.labels, datasets: [
+                { label: 'Actual Cost (₹ Lakh)', data: chartData.cost.actual, borderColor: '#06B6D4', backgroundColor: gradient, fill: true, tension: .42, borderWidth: 3, pointRadius: 4 },
+                { label: 'Budget (₹ Lakh)', data: chartData.cost.budget, borderColor: '#9333EA', borderDash: [7, 6], tension: .35, borderWidth: 2, pointRadius: 0 }
+            ] },
+            options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'top', align: 'end' } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: 'rgba(148,163,184,.16)' } } } }
         });
     }
 
@@ -143,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (distributionCanvas) {
         new Chart(distributionCanvas, {
             type: 'doughnut',
-            data: { labels: ['Heavy Trucks', 'Light Commercial', 'Utility', 'Passenger'], datasets: [{ data: [46, 29, 16, 9], backgroundColor: ['#2563EB', '#06B6D4', '#22C55E', '#F97316'], borderWidth: 0, hoverOffset: 8 }] },
+            data: { labels: chartData.distribution.labels, datasets: [{ data: chartData.distribution.values, backgroundColor: ['#2563EB', '#06B6D4', '#22C55E', '#F97316', '#9333EA', '#FACC15'], borderWidth: 0, hoverOffset: 8 }] },
             options: { responsive: true, maintainAspectRatio: false, cutout: '64%', plugins: { legend: { position: 'bottom' } } }
         });
     }

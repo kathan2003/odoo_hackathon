@@ -11,10 +11,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet"
-      href="{{ url_for('static', filename='css/dark-theme.css') }}">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    {% if dark_theme_enabled %}
+    <link href="{{ url_for('static', filename='css/dark-theme.css') }}" rel="stylesheet">
+    {% endif %}
+    <style>
+        .dropdown-menu.transit-menu { min-width: 270px; border-radius: 16px; overflow: hidden; }
+        .dropdown-menu.transit-menu .dropdown-item { white-space: normal; }
+        .flash-stack { position: fixed; top: 22px; right: 22px; z-index: 2000; width: min(380px, calc(100vw - 32px)); }
+        .inline-delete { display: inline; }
+        .clickable-profile { border: 0; background: transparent; color: inherit; }
+        .search-result-link { color: inherit; }
+        .search-result-link:hover { color: var(--primary); }
+    </style>
+    {% block head %}{% endblock %}
 </head>
 <body>
     {% set current_path = request.path.rstrip('/') or '/' %}
@@ -38,11 +48,9 @@
             <a class="sidebar-link {% if current_path == '/fuel' %}active{% endif %}" href="{{ url_for('fuel') }}">
                 <i class="bi bi-fuel-pump-fill"></i><span>Fuel Management</span>
             </a>
-            <a href="{{ url_for('expense') }}"
-   class="sidebar-link {% if request.endpoint == 'expense' %}active{% endif %}">
-    <i class="bi bi-wallet2"></i>
-    <span>Expenses</span>
-</a>
+            <a class="sidebar-link {% if current_path == '/expense' %}active{% endif %}" href="{{ url_for('expense') }}">
+                <i class="bi bi-wallet2"></i><span>Expenses</span>
+            </a>
             <a class="sidebar-link {% if current_path == '/reports' %}active{% endif %}" href="{{ url_for('reports') }}">
                 <i class="bi bi-bar-chart-line-fill"></i><span>Reports Analytics</span>
             </a>
@@ -63,13 +71,13 @@
             </a>
         </nav>
 
-        <div class="sidebar-insight">
+        <a class="sidebar-insight" href="{{ url_for('reports') }}">
             <div class="insight-icon"><i class="bi bi-lightning-charge-fill"></i></div>
             <div>
                 <strong>Fleet Analytics</strong>
                 <small>Optimize every kilometre</small>
             </div>
-        </div>
+        </a>
     </aside>
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -87,23 +95,45 @@
             </div>
 
             <div class="navbar-actions">
-                <label class="global-search" aria-label="Search">
+                <form class="global-search" action="{{ url_for('search') }}" method="get" role="search">
                     <i class="bi bi-search"></i>
-                    <input type="search" placeholder="Search fleet data...">
-                </label>
+                    <input type="search" name="q" value="{{ request.args.get('q', '') if request.endpoint == 'search' else '' }}" placeholder="Search fleet data..." aria-label="Search fleet data">
+                </form>
 
-                <button class="icon-button notification-button" type="button" aria-label="Notifications">
-                    <i class="bi bi-bell-fill"></i>
-                    <span class="notification-dot"></span>
-                </button>
+                <div class="dropdown">
+                    <button class="icon-button notification-button" type="button" aria-label="Notifications" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-bell-fill"></i>
+                        <span class="notification-dot"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end transit-menu p-2">
+                        <li><h6 class="dropdown-header">Operations alerts</h6></li>
+                        {% for note in global_notifications %}
+                        <li>
+                            <a class="dropdown-item rounded-3 py-2" href="{{ note.url }}">
+                                <i class="bi {{ note.icon }} me-2 text-primary"></i>{{ note.title }}
+                            </a>
+                        </li>
+                        {% else %}
+                        <li><span class="dropdown-item-text text-muted">No new alerts.</span></li>
+                        {% endfor %}
+                    </ul>
+                </div>
 
-                <div class="user-profile">
-                    <div class="user-avatar">AM</div>
-                    <div class="user-meta d-none d-sm-block">
-                        <strong>Admin</strong>
-                        <span>Fleet Manager</span>
-                    </div>
-                    <i class="bi bi-chevron-down d-none d-sm-inline"></i>
+                <div class="dropdown">
+                    <button class="user-profile clickable-profile" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="user-avatar">{{ (global_profile.name[:2] if global_profile else 'AM')|upper }}</div>
+                        <div class="user-meta d-none d-sm-block">
+                            <strong>{{ global_profile.name if global_profile else 'Admin' }}</strong>
+                            <span>{{ global_profile.role if global_profile else 'Fleet Manager' }}</span>
+                        </div>
+                        <i class="bi bi-chevron-down d-none d-sm-inline"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end transit-menu p-2">
+                        <li><a class="dropdown-item rounded-3" href="{{ url_for('profile') }}"><i class="bi bi-person-circle me-2"></i>My Profile</a></li>
+                        <li><a class="dropdown-item rounded-3" href="{{ url_for('settings') }}"><i class="bi bi-gear me-2"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item rounded-3" href="{{ url_for('reports') }}"><i class="bi bi-bar-chart-line me-2"></i>Analytics</a></li>
+                    </ul>
                 </div>
             </div>
         </header>
@@ -112,6 +142,17 @@
             {% block content %}{% endblock %}
         </section>
     </main>
+
+    <div class="flash-stack">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show shadow" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        {% endwith %}
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
@@ -139,14 +180,140 @@
                 if (window.innerWidth >= 992) closeSidebar();
             });
 
+            document.querySelectorAll('form[data-confirm]').forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!window.confirm(form.dataset.confirm || 'Are you sure?')) {
+                        event.preventDefault();
+                    }
+                });
+            });
+
+            window.setEditForm = function (modalId, values) {
+                const modalElement = document.getElementById(modalId);
+                if (!modalElement) return;
+                Object.entries(values).forEach(([name, value]) => {
+                    const field = modalElement.querySelector(`[name="${name}"]`);
+                    if (field) field.value = value ?? '';
+                });
+                const title = modalElement.querySelector('.modal-title');
+                if (title && values._title) title.textContent = values._title;
+                bootstrap.Modal.getOrCreateInstance(modalElement).show();
+            };
+
+            window.resetModalForm = function (modalId, title) {
+                const modalElement = document.getElementById(modalId);
+                if (!modalElement) return;
+                const form = modalElement.querySelector('form');
+                form?.reset();
+                const idField = form?.querySelector('[name="id"]');
+                if (idField) idField.value = '';
+                const heading = modalElement.querySelector('.modal-title');
+                if (heading && title) heading.textContent = title;
+            };
+
             if (window.Chart) {
+                const dark = {{ dark_theme_enabled|tojson }};
                 Chart.defaults.font.family = "Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-                Chart.defaults.color = '#64748b';
+                Chart.defaults.color = dark ? '#cbd5e1' : '#64748b';
+                Chart.defaults.borderColor = dark ? 'rgba(148,163,184,.16)' : 'rgba(148,163,184,.16)';
                 Chart.defaults.plugins.legend.labels.usePointStyle = true;
                 Chart.defaults.plugins.legend.labels.boxWidth = 8;
                 Chart.defaults.plugins.tooltip.backgroundColor = '#0f172a';
                 Chart.defaults.plugins.tooltip.padding = 12;
                 Chart.defaults.plugins.tooltip.cornerRadius = 10;
+            }
+
+
+            async function downloadTransitOpsFile(url, triggerElement) {
+                if (!url) return;
+
+                const originalHtml = triggerElement?.innerHTML;
+                const originalDisabled = triggerElement?.disabled;
+
+                try {
+                    if (triggerElement) {
+                        triggerElement.disabled = true;
+                        triggerElement.setAttribute('aria-busy', 'true');
+                        triggerElement.innerHTML =
+                            '<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Preparing...';
+                    }
+
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        credentials: 'same-origin',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(
+                            errorText && !errorText.trim().startsWith('<!doctype')
+                                ? errorText
+                                : `Export failed with status ${response.status}.`
+                        );
+                    }
+
+                    const blob = await response.blob();
+                    const disposition = response.headers.get('Content-Disposition') || '';
+                    const utf8Match = disposition.match(/filename\*=UTF-8''([^;]+)/i);
+                    const plainMatch = disposition.match(/filename="?([^";]+)"?/i);
+                    const fallbackName = url.includes('.pdf')
+                        ? 'transitops-report.pdf'
+                        : 'transitops-export.csv';
+
+                    let filename = fallbackName;
+                    if (utf8Match?.[1]) {
+                        filename = decodeURIComponent(utf8Match[1]);
+                    } else if (plainMatch?.[1]) {
+                        filename = plainMatch[1];
+                    }
+
+                    const objectUrl = URL.createObjectURL(blob);
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = objectUrl;
+                    downloadLink.download = filename;
+                    downloadLink.style.display = 'none';
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    downloadLink.remove();
+
+                    window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
+                } catch (error) {
+                    console.error(error);
+                    window.alert(error.message || 'Unable to export the file.');
+                } finally {
+                    if (triggerElement) {
+                        triggerElement.disabled = Boolean(originalDisabled);
+                        triggerElement.removeAttribute('aria-busy');
+                        triggerElement.innerHTML = originalHtml;
+                    }
+                }
+            }
+
+            document.querySelectorAll('a[href*="/export/"], a[href$=".csv"], a[href$=".pdf"]').forEach(link => {
+                link.addEventListener('click', event => {
+                    event.preventDefault();
+                    downloadTransitOpsFile(link.href, link);
+                });
+            });
+
+            document.querySelectorAll('[data-export-url]').forEach(button => {
+                button.addEventListener('click', () => {
+                    downloadTransitOpsFile(button.dataset.exportUrl, button);
+                });
+            });
+
+            const params = new URLSearchParams(window.location.search);
+            const editId = params.get('edit');
+            if (editId) {
+                document.querySelector(`[data-edit-id="${editId}"]`)?.click();
+            }
+            if (params.get('open') === 'add') {
+                document.querySelector('[data-open-add]')?.click();
+            }
+            const viewId = params.get('view');
+            if (viewId) {
+                document.getElementById(`record-${viewId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         });
     </script>

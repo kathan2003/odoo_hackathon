@@ -7,68 +7,75 @@
         <h2>Fleet reports and analytics</h2>
         <p>Use operating, cost and utilization insights to improve fleet profitability.</p>
     </div>
-    <div class="page-actions">
-        <button class="btn btn-soft" type="button"><i class="bi bi-calendar3"></i> Jul 2026</button>
-        <button class="btn btn-gradient" type="button"><i class="bi bi-file-earmark-pdf"></i> Export Report</button>
-    </div>
+    <form class="page-actions" method="get" action="{{ url_for('reports') }}" id="reportMonthForm">
+        <input
+            class="btn btn-soft"
+            id="reportMonthPicker"
+            type="month"
+            name="month"
+            value="{{ selected_month }}"
+            min="2020-01"
+            max="2035-12"
+            aria-label="Select report month"
+            title="Select report month"
+            autocomplete="off"
+        >
+        <a
+            class="btn btn-gradient"
+            href="{{ url_for('export_report_pdf', month=selected_month) }}"
+            download
+        >
+            <i class="bi bi-file-earmark-pdf"></i> Export Report
+        </a>
+    </form>
 </div>
 
 <div class="row g-4 mb-4">
     <div class="col-12 col-sm-6 col-xl-3">
         <article class="formula-card glass-card accent-green">
-            <div class="formula-top"><span class="kpi-icon"><i class="bi bi-speedometer"></i></span><span class="trend positive"><i class="bi bi-arrow-up-right"></i> 6.2%</span></div>
+            <div class="formula-top"><span class="kpi-icon"><i class="bi bi-speedometer"></i></span><span class="trend positive"><i class="bi bi-arrow-up-right"></i> Live</span></div>
             <span class="formula-title">Fuel Efficiency</span><strong>{{ stats.fuel_efficiency }}</strong><small>Distance ÷ Fuel Used</small>
         </article>
     </div>
     <div class="col-12 col-sm-6 col-xl-3">
         <article class="formula-card glass-card accent-orange">
-            <div class="formula-top"><span class="kpi-icon"><i class="bi bi-cash-stack"></i></span><span class="trend negative"><i class="bi bi-arrow-down-right"></i> 3.4%</span></div>
-            <span class="formula-title">Operational Cost</span><strong>{{ stats.operational_cost }}</strong><small>Fuel + Maintenance</small>
+            <div class="formula-top"><span class="kpi-icon"><i class="bi bi-cash-stack"></i></span><span class="trend negative"><i class="bi bi-calculator"></i> Total</span></div>
+            <span class="formula-title">Operational Cost</span><strong>{{ stats.operational_cost }}</strong><small>Fuel + Maintenance + Other</small>
         </article>
     </div>
     <div class="col-12 col-sm-6 col-xl-3">
         <article class="formula-card glass-card accent-purple">
-            <div class="formula-top"><span class="kpi-icon"><i class="bi bi-graph-up-arrow"></i></span><span class="trend positive"><i class="bi bi-arrow-up-right"></i> 4.8%</span></div>
-            <span class="formula-title">Vehicle ROI</span><strong>{{ stats.vehicle_roi }}</strong><small>(Revenue − Fuel − Maintenance) ÷ Acquisition Cost</small>
+            <div class="formula-top"><span class="kpi-icon"><i class="bi bi-graph-up-arrow"></i></span><span class="trend positive"><i class="bi bi-arrow-up-right"></i> ROI</span></div>
+            <span class="formula-title">Vehicle ROI</span><strong>{{ stats.vehicle_roi }}</strong><small>(Revenue − Cost) ÷ Acquisition Cost</small>
         </article>
     </div>
     <div class="col-12 col-sm-6 col-xl-3">
         <article class="formula-card glass-card accent-cyan">
-            <div class="formula-top"><span class="kpi-icon"><i class="bi bi-pie-chart-fill"></i></span><span class="trend positive"><i class="bi bi-arrow-up-right"></i> 4.2%</span></div>
-            <span class="formula-title">Fleet Utilization</span><strong>{{ stats.fleet_utilization }}</strong><small>Active vehicle hours ÷ Available hours</small>
+            <div class="formula-top"><span class="kpi-icon"><i class="bi bi-pie-chart-fill"></i></span><span class="trend positive"><i class="bi bi-activity"></i> Live</span></div>
+            <span class="formula-title">Fleet Utilization</span><strong>{{ stats.fleet_utilization }}</strong><small>Active vehicles ÷ Total vehicles</small>
         </article>
     </div>
 </div>
 
 <div class="row g-4 mb-4">
-    <div class="col-12 col-xl-7">
-        <article class="chart-card glass-card h-100"><div class="card-heading"><div><h3>Fuel Cost Analysis</h3><p>Actual fuel cost compared with planned budget</p></div><span class="status-chip">Line chart</span></div><div class="chart-box"><canvas id="reportFuelChart"></canvas></div></article>
-    </div>
-    <div class="col-12 col-xl-5">
-        <article class="chart-card glass-card h-100"><div class="card-heading"><div><h3>Vehicle Cost Comparison</h3><p>Operating cost by vehicle</p></div><span class="status-chip">₹ Lakh</span></div><div class="chart-box"><canvas id="vehicleCostChart"></canvas></div></article>
-    </div>
+    <div class="col-12 col-xl-7"><article class="chart-card glass-card h-100"><div class="card-heading"><div><h3>Fuel Cost Analysis</h3><p>Actual fuel cost compared with planned budget</p></div><span class="status-chip">Line chart</span></div><div class="chart-box"><canvas id="reportFuelChart"></canvas></div></article></div>
+    <div class="col-12 col-xl-5"><article class="chart-card glass-card h-100"><div class="card-heading"><div><h3>Vehicle Cost Comparison</h3><p>Operating cost by vehicle</p></div><span class="status-chip">₹ Lakh</span></div><div class="chart-box"><canvas id="vehicleCostChart"></canvas></div></article></div>
 </div>
 
 <div class="row g-4 mb-4">
-    <div class="col-12 col-xl-7">
-        <article class="chart-card glass-card h-100"><div class="card-heading"><div><h3>Trip Analysis</h3><p>Completed trips and distance movement</p></div><span class="status-chip">Area chart</span></div><div class="chart-box"><canvas id="tripAnalysisChart"></canvas></div></article>
-    </div>
-    <div class="col-12 col-md-6 col-xl-5">
-        <article class="chart-card glass-card h-100"><div class="card-heading"><div><h3>Fleet Utilization</h3><p>Current fleet availability mix</p></div></div><div class="chart-box"><canvas id="fleetUtilizationChart"></canvas></div></article>
-    </div>
+    <div class="col-12 col-xl-7"><article class="chart-card glass-card h-100"><div class="card-heading"><div><h3>Trip Analysis</h3><p>Completed trips and completion percentage</p></div><span class="status-chip">Area chart</span></div><div class="chart-box"><canvas id="tripAnalysisChart"></canvas></div></article></div>
+    <div class="col-12 col-md-6 col-xl-5"><article class="chart-card glass-card h-100"><div class="card-heading"><div><h3>Fleet Utilization</h3><p>Current fleet availability mix</p></div></div><div class="chart-box"><canvas id="fleetUtilizationChart"></canvas></div></article></div>
 </div>
 
 <div class="row g-4">
-    <div class="col-12 col-xl-5">
-        <article class="chart-card glass-card h-100"><div class="card-heading"><div><h3>Expense Breakdown</h3><p>Operating expense distribution</p></div></div><div class="chart-box"><canvas id="reportExpenseChart"></canvas></div></article>
-    </div>
+    <div class="col-12 col-xl-5"><article class="chart-card glass-card h-100"><div class="card-heading"><div><h3>Expense Breakdown</h3><p>Operating expense distribution</p></div></div><div class="chart-box"><canvas id="reportExpenseChart"></canvas></div></article></div>
     <div class="col-12 col-xl-7">
         <article class="insight-card glass-card h-100">
             <div class="card-heading"><div><h3>Performance Insights</h3><p>Recommended actions from current fleet data</p></div><span class="status-chip"><i class="bi bi-stars"></i> Smart insights</span></div>
             <div class="insight-list">
-                <div class="insight-item"><span class="insight-item-icon success"><i class="bi bi-check2-circle"></i></span><div><strong>Fuel efficiency improved by 6.2%</strong><p>Driver coaching and route optimization reduced idle fuel consumption.</p></div></div>
-                <div class="insight-item"><span class="insight-item-icon warning"><i class="bi bi-exclamation-triangle"></i></span><div><strong>GJ01AB1234 has unusually high fuel use</strong><p>Inspect tyre pressure, route pattern and engine performance this week.</p></div></div>
-                <div class="insight-item"><span class="insight-item-icon info"><i class="bi bi-lightbulb"></i></span><div><strong>Increase utilization of three idle vehicles</strong><p>Reassign upcoming short-distance trips to underutilized vehicles.</p></div></div>
+                {% for insight in insights %}
+                <div class="insight-item"><span class="insight-item-icon {{ insight.class }}"><i class="bi {{ insight.icon }}"></i></span><div><strong>{{ insight.title }}</strong><p>{{ insight.text }}</p></div></div>
+                {% endfor %}
             </div>
         </article>
     </div>
@@ -78,17 +85,52 @@
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+
+    const monthPicker = document.getElementById('reportMonthPicker');
+    const monthForm = document.getElementById('reportMonthForm');
+
+    if (monthPicker && monthForm) {
+        const openMonthPicker = () => {
+            if (typeof monthPicker.showPicker === 'function') {
+                try {
+                    monthPicker.showPicker();
+                } catch (error) {
+                    monthPicker.focus();
+                }
+            } else {
+                monthPicker.focus();
+            }
+        };
+
+        monthPicker.addEventListener('click', openMonthPicker);
+        monthPicker.addEventListener('focus', () => {
+            monthPicker.style.cursor = 'pointer';
+        });
+        monthPicker.addEventListener('change', () => {
+            if (monthPicker.value) {
+                monthForm.requestSubmit();
+            }
+        });
+        monthPicker.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openMonthPicker();
+            }
+        });
+    }
+
+    const data = {{ chart_data|tojson }};
     const baseGrid = 'rgba(148,163,184,.16)';
 
     const fuelCanvas = document.getElementById('reportFuelChart');
     if (fuelCanvas) {
         new Chart(fuelCanvas, {
             type: 'line',
-            data: { labels: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'], datasets: [
-                { label: 'Actual Cost', data: [15.2, 16.1, 15.7, 17.4, 17.1, 17.82], borderColor: '#2563EB', backgroundColor: 'rgba(37,99,235,.12)', fill: true, tension: .42, borderWidth: 3, pointRadius: 4 },
-                { label: 'Budget', data: [16, 16, 16.5, 17, 17.5, 18], borderColor: '#F97316', borderDash: [7, 6], tension: .4, borderWidth: 2, pointRadius: 0 }
+            data: { labels: data.fuel.labels, datasets: [
+                { label: 'Actual Cost', data: data.fuel.actual, borderColor: '#2563EB', backgroundColor: 'rgba(37,99,235,.12)', fill: true, tension: .42, borderWidth: 3, pointRadius: 4 },
+                { label: 'Budget', data: data.fuel.budget, borderColor: '#F97316', borderDash: [7, 6], tension: .4, borderWidth: 2, pointRadius: 0 }
             ] },
-            options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'top', align: 'end' } }, scales: { x: { grid: { display: false } }, y: { grid: { color: baseGrid } } } }
+            options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'top', align: 'end' } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: baseGrid } } } }
         });
     }
 
@@ -96,11 +138,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (vehicleCostCanvas) {
         new Chart(vehicleCostCanvas, {
             type: 'bar',
-            data: { labels: ['AB1234', 'CD5678', 'EF9012', 'GH3456', 'JK7890'], datasets: [
-                { label: 'Fuel', data: [4.8, 3.9, 3.4, 3.1, 4.2], backgroundColor: '#2563EB', borderRadius: 7 },
-                { label: 'Maintenance', data: [1.7, 1.2, .9, 1.1, 1.4], backgroundColor: '#9333EA', borderRadius: 7 }
+            data: { labels: data.vehicle_cost.labels, datasets: [
+                { label: 'Fuel', data: data.vehicle_cost.fuel, backgroundColor: '#2563EB', borderRadius: 7 },
+                { label: 'Maintenance', data: data.vehicle_cost.maintenance, backgroundColor: '#9333EA', borderRadius: 7 }
             ] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', align: 'end' } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: baseGrid } } } }
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', align: 'end' } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true, grid: { color: baseGrid } } } }
         });
     }
 
@@ -112,11 +154,11 @@ document.addEventListener('DOMContentLoaded', () => {
         gradient.addColorStop(1, 'rgba(147, 51, 234, .02)');
         new Chart(ctx, {
             type: 'line',
-            data: { labels: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'], datasets: [
-                { label: 'Completed Trips', data: [118, 126, 121, 139, 148, 156], borderColor: '#9333EA', backgroundColor: gradient, fill: true, tension: .42, borderWidth: 3, pointRadius: 4 },
-                { label: 'On-time %', data: [89, 91, 88, 93, 94, 96], borderColor: '#22C55E', backgroundColor: 'transparent', tension: .4, borderWidth: 2, pointRadius: 3, yAxisID: 'y1' }
+            data: { labels: data.trips.labels, datasets: [
+                { label: 'Completed Trips', data: data.trips.completed, borderColor: '#9333EA', backgroundColor: gradient, fill: true, tension: .42, borderWidth: 3, pointRadius: 4 },
+                { label: 'Completion %', data: data.trips.on_time, borderColor: '#22C55E', backgroundColor: 'transparent', tension: .4, borderWidth: 2, pointRadius: 3, yAxisID: 'y1' }
             ] },
-            options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'top', align: 'end' } }, scales: { x: { grid: { display: false } }, y: { grid: { color: baseGrid } }, y1: { position: 'right', min: 70, max: 100, grid: { display: false } } } }
+            options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'top', align: 'end' } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: baseGrid } }, y1: { position: 'right', min: 0, max: 100, grid: { display: false } } } }
         });
     }
 
@@ -124,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (utilizationCanvas) {
         new Chart(utilizationCanvas, {
             type: 'doughnut',
-            data: { labels: ['Active', 'Available', 'Maintenance', 'Inactive'], datasets: [{ data: [31, 10, 4, 3], backgroundColor: ['#22C55E', '#06B6D4', '#F97316', '#EF4444'], borderWidth: 0, hoverOffset: 8 }] },
+            data: { labels: data.utilization.labels, datasets: [{ data: data.utilization.values, backgroundColor: ['#22C55E', '#F97316', '#EF4444'], borderWidth: 0, hoverOffset: 8 }] },
             options: { responsive: true, maintainAspectRatio: false, cutout: '66%', plugins: { legend: { position: 'bottom' } } }
         });
     }
@@ -133,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (expenseCanvas) {
         new Chart(expenseCanvas, {
             type: 'pie',
-            data: { labels: ['Fuel', 'Maintenance', 'Insurance', 'Toll & Other'], datasets: [{ data: [71.7, 19.9, 5.4, 3], backgroundColor: ['#2563EB', '#9333EA', '#F97316', '#06B6D4'], borderColor: '#ffffff', borderWidth: 3, hoverOffset: 8 }] },
+            data: { labels: data.expense.labels, datasets: [{ data: data.expense.values, backgroundColor: ['#2563EB', '#9333EA', '#F97316', '#06B6D4', '#22C55E', '#FACC15'], borderColor: 'rgba(15,23,42,.80)', borderWidth: 2, hoverOffset: 8 }] },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
         });
     }
