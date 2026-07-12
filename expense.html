@@ -1,451 +1,120 @@
 {% extends "base.html" %}
 
-{% block title %}
-Expense Management
-{% endblock %}
-
-{% block breadcrumb %}
-Expense Management
-{% endblock %}
-
 {% block content %}
-
-<div class="container-fluid fade-up">
-
-    <!-- ========================================= -->
-    <!-- Page Header -->
-    <!-- ========================================= -->
-
-    <div class="row mb-4">
-
-        <div class="col-md-8">
-
-            <h2 class="fw-bold">
-
-                Expense Management
-
-            </h2>
-
-            <p class="text-muted">
-
-                Track operational expenses for your fleet.
-
-            </p>
-
-        </div>
-
+<div class="page-heading-row">
+    <div>
+        <span class="eyebrow">Cost control</span>
+        <h2>Fleet expense management</h2>
+        <p>Review operating costs, approve transactions and identify spending patterns.</p>
     </div>
-
-    <!-- ========================================= -->
-    <!-- Expense Entry Form -->
-    <!-- ========================================= -->
-
-    <div class="card mb-4">
-
-        <div class="card-header">
-
-            <i class="fa-solid fa-wallet"></i>
-
-            Add Expense
-
-        </div>
-
-        <div class="card-body">
-
-            <form
-                action="{{ url_for('reports.expense_tracking') }}"
-                method="POST">
-
-                <div class="row">
-
-                    <div class="col-md-4 mb-3">
-
-                        <label>Vehicle</label>
-
-                        <select
-                            class="form-select"
-                            name="vehicle_id">
-
-                            <option value="">
-
-                                General Expense
-
-                            </option>
-
-                            {% for vehicle in vehicles %}
-
-                            <option value="{{ vehicle.id }}">
-
-                                {{ vehicle.registration_number }}
-
-                            </option>
-
-                            {% endfor %}
-
-                        </select>
-
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-
-                        <label>Expense Type</label>
-
-                        <select
-                            class="form-select"
-                            name="expense_type"
-                            required>
-
-                            <option>Fuel</option>
-
-                            <option>Maintenance</option>
-
-                            <option>Insurance</option>
-
-                            <option>Tyres</option>
-
-                            <option>Repair</option>
-
-                            <option>Tax</option>
-
-                            <option>Other</option>
-
-                        </select>
-
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-
-                        <label>Amount</label>
-
-                        <input
-                            type="number"
-                            step="0.01"
-                            class="form-control"
-                            name="amount"
-                            required>
-
-                    </div>
-
-                </div>
-
-                <div class="row">
-
-                    <div class="col-md-12 mb-3">
-
-                        <label>Description</label>
-
-                        <textarea
-                            class="form-control"
-                            rows="3"
-                            name="description"></textarea>
-
-                    </div>
-
-                </div>
-
-                <button class="btn btn-primary">
-
-                    <i class="fa-solid fa-plus"></i>
-
-                    Save Expense
-
-                </button>
-
-            </form>
-
-        </div>
-
+    <div class="page-actions">
+        <button class="btn btn-soft" type="button"><i class="bi bi-file-earmark-spreadsheet"></i> CSV</button>
+        <button class="btn btn-gradient" type="button" data-bs-toggle="modal" data-bs-target="#addExpenseModal"><i class="bi bi-plus-lg"></i> Add Expense</button>
     </div>
-        <!-- ========================================= -->
-    <!-- Summary Cards -->
-    <!-- ========================================= -->
-
-    <div class="row mb-4">
-
-        <div class="col-lg-3">
-
-            <div class="dashboard-card success">
-
-                <h6>Total Expenses</h6>
-
-                <h2>
-
-                    ₹{{ total_expense or 0 }}
-
-                </h2>
-
-                <i class="fa-solid fa-money-bill-wave"></i>
-
-            </div>
-
-        </div>
-
-        <div class="col-lg-3">
-
-            <div class="dashboard-card info">
-
-                <h6>This Month</h6>
-
-                <h2>
-
-                    ₹{{ monthly_expense or 0 }}
-
-                </h2>
-
-                <i class="fa-solid fa-calendar"></i>
-
-            </div>
-
-        </div>
-
-        <div class="col-lg-3">
-
-            <div class="dashboard-card warning">
-
-                <h6>Average Expense</h6>
-
-                <h2>
-
-                    ₹{{ average_expense or 0 }}
-
-                </h2>
-
-                <i class="fa-solid fa-chart-column"></i>
-
-            </div>
-
-        </div>
-
-        <div class="col-lg-3">
-
-            <div class="dashboard-card danger">
-
-                <h6>Total Records</h6>
-
-                <h2>
-
-                    {{ expenses|length }}
-
-                </h2>
-
-                <i class="fa-solid fa-list"></i>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- ========================================= -->
-    <!-- Search -->
-    <!-- ========================================= -->
-
-    <div class="card mb-4">
-
-        <div class="card-body">
-
-            <div class="row">
-
-                <div class="col-md-9">
-
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="expenseSearch"
-                        placeholder="Search Expense">
-
-                </div>
-
-                <div class="col-md-3">
-
-                    <button
-                        class="btn btn-success w-100">
-
-                        <i class="fa-solid fa-search"></i>
-
-                        Search
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- ========================================= -->
-    <!-- Expense Table -->
-    <!-- ========================================= -->
-
-    <div class="card">
-
-        <div class="card-header">
-
-            Expense Records
-
-        </div>
-
-        <div class="card-body">
-
-            <div class="table-responsive">
-
-                <table
-                    class="table table-hover"
-                    id="expenseTable">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>#</th>
-
-                            <th>Vehicle</th>
-
-                            <th>Type</th>
-
-                            <th>Amount</th>
-
-                            <th>Date</th>
-
-                            <th>Action</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        {% for expense in expenses %}
-
-                        <tr>
-
-                            <td>
-
-                                {{ loop.index }}
-
-                            </td>
-
-                            <td>
-
-                                {% if expense.vehicle %}
-
-                                {{ expense.vehicle.registration_number }}
-
-                                {% else %}
-
-                                General
-
-                                {% endif %}
-
-                            </td>
-
-                            <td>
-
-                                {{ expense.expense_type }}
-
-                            </td>
-
-                            <td>
-
-                                ₹{{ expense.amount }}
-
-                            </td>
-
-                            <td>
-
-                                {{ expense.expense_date.strftime('%d-%m-%Y') }}
-
-                            </td>
-
-                            <td>
-
-                                <button class="btn btn-warning btn-sm">
-
-                                    <i class="fa-solid fa-pen"></i>
-
-                                </button>
-
-                                <button class="btn btn-danger btn-sm">
-
-                                    <i class="fa-solid fa-trash"></i>
-
-                                </button>
-
-                            </td>
-
-                        </tr>
-
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-    </div>
-        <!-- ========================================= -->
-    <!-- Pagination -->
-    <!-- ========================================= -->
-
-    <div class="mt-4 d-flex justify-content-center">
-
-        <ul class="pagination">
-
-            <li class="page-item disabled">
-
-                <a class="page-link">
-
-                    Previous
-
-                </a>
-
-            </li>
-
-            <li class="page-item active">
-
-                <a class="page-link">
-
-                    1
-
-                </a>
-
-            </li>
-
-            <li class="page-item">
-
-                <a class="page-link">
-
-                    2
-
-                </a>
-
-            </li>
-
-            <li class="page-item">
-
-                <a class="page-link">
-
-                    Next
-
-                </a>
-
-            </li>
-
-        </ul>
-
-    </div>
-
 </div>
 
+<div class="row g-4 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3"><article class="kpi-card glass-card accent-blue"><div class="kpi-icon"><i class="bi bi-wallet2"></i></div><div class="kpi-content"><span>Total Expenses</span><strong>{{ stats.total }}</strong><small>Current month operating cost</small></div></article></div>
+    <div class="col-12 col-sm-6 col-xl-3"><article class="kpi-card glass-card accent-orange"><div class="kpi-icon"><i class="bi bi-fuel-pump-fill"></i></div><div class="kpi-content"><span>Fuel Expense</span><strong>{{ stats.fuel }}</strong><small>71.7% of total expenses</small></div></article></div>
+    <div class="col-12 col-sm-6 col-xl-3"><article class="kpi-card glass-card accent-purple"><div class="kpi-icon"><i class="bi bi-tools"></i></div><div class="kpi-content"><span>Maintenance</span><strong>{{ stats.maintenance }}</strong><small>Scheduled and repair costs</small></div></article></div>
+    <div class="col-12 col-sm-6 col-xl-3"><article class="kpi-card glass-card accent-green"><div class="kpi-icon"><i class="bi bi-receipt-cutoff"></i></div><div class="kpi-content"><span>Other Expense</span><strong>{{ stats.other }}</strong><small>Toll, insurance and miscellaneous</small></div></article></div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-12 col-xl-5">
+        <article class="chart-card glass-card h-100">
+            <div class="card-heading"><div><h3>Expense Breakdown</h3><p>Share of total operating expense</p></div></div>
+            <div class="chart-box"><canvas id="expenseBreakdownChart"></canvas></div>
+        </article>
+    </div>
+    <div class="col-12 col-xl-7">
+        <article class="chart-card glass-card h-100">
+            <div class="card-heading"><div><h3>Monthly Expense Trend</h3><p>Six-month category-wise cost movement</p></div><span class="status-chip">FY 2026–27</span></div>
+            <div class="chart-box"><canvas id="expenseTrendChart"></canvas></div>
+        </article>
+    </div>
+</div>
+
+<article class="table-card glass-card">
+    <div class="card-heading table-heading-wrap">
+        <div><h3>Expense Records</h3><p>Recent transactions and approval status</p></div>
+        <div class="table-tools">
+            <label class="table-search"><i class="bi bi-search"></i><input type="search" placeholder="Search expense"></label>
+            <select class="form-select compact-select"><option>All Categories</option><option>Fuel</option><option>Maintenance</option><option>Insurance</option></select>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table app-table align-middle mb-0">
+            <thead><tr><th>Date</th><th>Vehicle</th><th>Category</th><th>Description</th><th>Amount</th><th>Payment</th><th>Status</th><th class="text-end">Action</th></tr></thead>
+            <tbody>
+                {% for record in expense_records %}
+                <tr>
+                    <td>{{ record.date }}</td>
+                    <td><span class="vehicle-cell"><i class="bi bi-truck-front"></i>{{ record.vehicle }}</span></td>
+                    <td>{{ record.category }}</td>
+                    <td>{{ record.description }}</td>
+                    <td><strong>{{ record.amount }}</strong></td>
+                    <td>{{ record.payment }}</td>
+                    <td>
+                        {% set status_class = 'success' if record.status == 'Completed' else ('warning' if record.status == 'Pending' else 'info') %}
+                        <span class="app-badge badge-{{ status_class }}">{{ record.status }}</span>
+                    </td>
+                    <td class="text-end"><button class="table-action" type="button"><i class="bi bi-pencil"></i></button><button class="table-action danger" type="button"><i class="bi bi-trash3"></i></button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</article>
+
+<div class="modal fade" id="addExpenseModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-modal">
+            <div class="modal-header"><h5 class="modal-title">Add Expense</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <form>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-12 col-sm-6"><label class="form-label">Vehicle</label><select class="form-select"><option>GJ01AB1234</option><option>GJ01CD5678</option></select></div>
+                        <div class="col-12 col-sm-6"><label class="form-label">Category</label><select class="form-select"><option>Fuel</option><option>Maintenance</option><option>Insurance</option><option>Other</option></select></div>
+                        <div class="col-12 col-sm-6"><label class="form-label">Date</label><input class="form-control" type="date"></div>
+                        <div class="col-12 col-sm-6"><label class="form-label">Amount</label><input class="form-control" type="number" min="0" placeholder="Enter amount"></div>
+                        <div class="col-12"><label class="form-label">Description</label><textarea class="form-control" rows="3" placeholder="Expense details"></textarea></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-soft" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-gradient">Save Expense</button></div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
-{% block js %}
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const breakdownCanvas = document.getElementById('expenseBreakdownChart');
+    if (breakdownCanvas) {
+        new Chart(breakdownCanvas, {
+            type: 'pie',
+            data: { labels: ['Fuel', 'Maintenance', 'Insurance', 'Toll & Other'], datasets: [{ data: [71.7, 19.9, 5.4, 3], backgroundColor: ['#2563EB', '#9333EA', '#F97316', '#22C55E'], borderColor: '#ffffff', borderWidth: 3, hoverOffset: 8 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        });
+    }
 
-<script src="{{ url_for('static', filename='js/expense.js') }}"></script>
-
+    const trendCanvas = document.getElementById('expenseTrendChart');
+    if (trendCanvas) {
+        new Chart(trendCanvas, {
+            type: 'bar',
+            data: {
+                labels: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [
+                    { label: 'Fuel', data: [15.2, 16.1, 15.7, 17.4, 17.1, 17.82], backgroundColor: '#2563EB', borderRadius: 7 },
+                    { label: 'Maintenance', data: [3.4, 4.1, 3.7, 5.6, 4.2, 4.95], backgroundColor: '#9333EA', borderRadius: 7 },
+                    { label: 'Other', data: [1.7, 1.5, 2.1, 1.8, 2.4, 2.08], backgroundColor: '#22C55E', borderRadius: 7 }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', align: 'end' } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: 'rgba(148,163,184,.16)' } } } }
+        });
+    }
+});
+</script>
 {% endblock %}

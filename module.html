@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-heading-row">
+    <div>
+        <span class="eyebrow">Operations module</span>
+        <h2>{{ module_name }}</h2>
+        <p>{{ module_description }}</p>
+    </div>
+    <button class="btn btn-gradient" type="button"><i class="bi bi-plus-lg"></i> Add New</button>
+</div>
+
+<div class="module-placeholder glass-card">
+    <div class="module-placeholder-icon"><i class="bi {{ module_icon }}"></i></div>
+    <h3>{{ module_name }}</h3>
+    <p>This route is connected correctly and ready for MySQL-backed CRUD screens.</p>
+    <div class="module-feature-grid">
+        <div><i class="bi bi-database-check"></i><strong>Database ready</strong><span>Connect SQLAlchemy models and queries.</span></div>
+        <div><i class="bi bi-ui-checks-grid"></i><strong>UI consistent</strong><span>Uses the shared sidebar and navbar.</span></div>
+        <div><i class="bi bi-shield-check"></i><strong>Route verified</strong><span>No redirect or 404 issue.</span></div>
+    </div>
+</div>
+{% endblock %}

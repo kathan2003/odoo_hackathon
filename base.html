@@ -1,509 +1,157 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="TransitOps fleet management dashboard">
+    <title>{{ page_title|default('TransitOps') }} | TransitOps</title>
 
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
-    <title>
-
-        {% block title %}
-
-        TransitOps
-
-        {% endblock %}
-
-    </title>
-
-    <!-- Bootstrap -->
-
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet">
-
-    <!-- Bootstrap Icons -->
-
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <!-- Font Awesome -->
-
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-    <!-- Google Font -->
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-
-    <!-- Custom CSS -->
-
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/style.css') }}">
-
-    {% block css %}
-
-    {% endblock %}
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 </head>
-
 <body>
+    {% set current_path = request.path.rstrip('/') or '/' %}
 
-<div class="wrapper">
-
-<!-- ============================= -->
-<!-- Sidebar -->
-<!-- ============================= -->
-
-<aside class="sidebar">
-
-    <div class="logo">
-
-        <i class="fa-solid fa-truck-fast"></i>
-
-        <span>
-
-            TransitOps
-
-        </span>
-
-    </div>
-
-    <ul>
-
-        <li>
-
-            <a href="/">
-
-                <i class="fa-solid fa-house"></i>
-
-                Dashboard
-
+    <aside class="app-sidebar" id="appSidebar" aria-label="Main navigation">
+        <div class="sidebar-brand-wrap">
+            <a class="sidebar-brand" href="{{ url_for('dashboard') }}">
+                <span class="brand-icon"><i class="bi bi-truck-front-fill"></i></span>
+                <span class="brand-text">Transit<span>Ops</span></span>
             </a>
-
-        </li>
-
-        <li>
-
-            <a href="/fuel">
-
-                <i class="fa-solid fa-gas-pump"></i>
-
-                Fuel Logs
-
-            </a>
-
-        </li>
-
-        <li>
-
-            <a href="/expenses">
-
-                <i class="fa-solid fa-wallet"></i>
-
-                Expenses
-
-            </a>
-
-        </li>
-
-        <li>
-
-            <a href="/reports">
-
-                <i class="fa-solid fa-chart-line"></i>
-
-                Reports
-
-            </a>
-
-        </li>
-
-        <li>
-
-            <a href="#">
-
-                <i class="fa-solid fa-download"></i>
-
-                Export CSV
-
-            </a>
-
-        </li>
-
-        <li>
-
-            <a href="#">
-
-                <i class="fa-solid fa-file-pdf"></i>
-
-                Export PDF
-
-            </a>
-
-        </li>
-
-    </ul>
-
-</aside>
-
-<!-- ============================= -->
-<!-- Main Content -->
-<!-- ============================= -->
-
-<div class="main-content">
-
-<!-- Navbar -->
-
-<nav class="navbar navbar-expand-lg">
-
-<div class="container-fluid">
-
-<div>
-
-<h3>
-
-Fleet Analytics Dashboard
-
-</h3>
-
-<p>
-
-Manage Fleet Expenses & Reports
-
-</p>
-
-</div>
-
-<div class="d-flex align-items-center">
-
-<button
-class="btn btn-light position-relative me-3">
-
-<i class="fa-solid fa-bell"></i>
-
-<span
-class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-
-3
-
-</span>
-
-</button>
-
-<div class="dropdown">
-
-<a
-class="dropdown-toggle text-decoration-none text-dark"
-data-bs-toggle="dropdown">
-
-<img
-src="https://ui-avatars.com/api/?name=Fleet+Admin&background=0D8ABC&color=fff"
-class="rounded-circle"
-width="45">
-
-Fleet Manager
-
+            <a
+    href="{{ url_for('expense') }}"
+    class="sidebar-link {% if request.endpoint == 'expense' %}active{% endif %}"
+>
+    <i class="bi bi-wallet2"></i>
+    <span>Expenses</span>
 </a>
-
-<ul class="dropdown-menu dropdown-menu-end">
-
-<li>
-
-<a class="dropdown-item">
-
-Profile
-
-</a>
-
-</li>
-
-<li>
-
-<a class="dropdown-item">
-
-Settings
-
-</a>
-
-</li>
-
-<li>
-
-<hr>
-
-</li>
-
-<li>
-
-<a class="dropdown-item">
-
-Logout
-
-</a>
-
-</li>
-
-</ul>
-
-</div>
-
-</div>
-
-</div>
-
-</nav>
-
-<!-- ============================= -->
-<!-- Breadcrumb -->
-<!-- ============================= -->
-
-<div class="container-fluid mt-4">
-
-<div class="row">
-
-<div class="col-12">
-
-<nav>
-
-<ol class="breadcrumb">
-
-<li class="breadcrumb-item">
-
-<a href="/">
-
-Dashboard
-
-</a>
-
-</li>
-
-<li class="breadcrumb-item active">
-
-{% block breadcrumb %}
-
-Home
-
-{% endblock %}
-
-</li>
-
-</ol>
-
-</nav>
-
-</div>
-
-</div>
-
-<!-- ============================= -->
-<!-- Main Page -->
-<!-- ============================= -->
-
-<div class="row">
-
-<div class="col-12">
-
-{% block content %}
-
-<!-- Child pages -->
-
-{% endblock %}
-                </div>
-            </div>
-
-            <!-- ============================= -->
-            <!-- Flash Messages -->
-            <!-- ============================= -->
-
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-
-                    <div class="row mt-3">
-
-                        <div class="col-12">
-
-                            {% for category, message in messages %}
-
-                                <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm">
-
-                                    {{ message }}
-
-                                    <button
-                                        type="button"
-                                        class="btn-close"
-                                        data-bs-dismiss="alert">
-                                    </button>
-
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
-
-                    </div>
-
-                {% endif %}
-            {% endwith %}
-
+            <button class="sidebar-close d-lg-none" id="sidebarClose" type="button" aria-label="Close sidebar">
+                <i class="bi bi-x-lg"></i>
+            </button>
         </div>
 
-        <!-- ============================= -->
-        <!-- Footer -->
-        <!-- ============================= -->
+        <div class="sidebar-caption">Main menu</div>
+        <nav class="sidebar-nav">
+            <a class="sidebar-link {% if current_path == '/' %}active{% endif %}" href="{{ url_for('dashboard') }}">
+                <i class="bi bi-grid-1x2-fill"></i><span>Dashboard</span>
+            </a>
+            <a class="sidebar-link {% if current_path == '/fuel' %}active{% endif %}" href="{{ url_for('fuel') }}">
+                <i class="bi bi-fuel-pump-fill"></i><span>Fuel Management</span>
+            </a>
+            <a class="sidebar-link {% if current_path == '/expense' %}active{% endif %}" href="{{ url_for('expense') }}">
+                <i class="bi bi-wallet2"></i><span>Expenses</span>
+            </a>
+            <a class="sidebar-link {% if current_path == '/reports' %}active{% endif %}" href="{{ url_for('reports') }}">
+                <i class="bi bi-bar-chart-line-fill"></i><span>Reports Analytics</span>
+            </a>
 
-        <footer class="footer mt-auto py-3">
+            <div class="sidebar-caption sidebar-caption-secondary">Operations</div>
 
-            <div class="container-fluid">
+            <a class="sidebar-link {% if current_path == '/vehicles' %}active{% endif %}" href="{{ url_for('vehicles') }}">
+                <i class="bi bi-truck-front-fill"></i><span>Vehicles</span>
+            </a>
+            <a class="sidebar-link {% if current_path == '/drivers' %}active{% endif %}" href="{{ url_for('drivers') }}">
+                <i class="bi bi-person-vcard-fill"></i><span>Drivers</span>
+            </a>
+            <a class="sidebar-link {% if current_path == '/trips' %}active{% endif %}" href="{{ url_for('trips') }}">
+                <i class="bi bi-signpost-split-fill"></i><span>Trips</span>
+            </a>
+            <a class="sidebar-link {% if current_path == '/maintenance' %}active{% endif %}" href="{{ url_for('maintenance') }}">
+                <i class="bi bi-tools"></i><span>Maintenance</span>
+            </a>
+        </nav>
 
-                <div class="row align-items-center">
+        <div class="sidebar-insight">
+            <div class="insight-icon"><i class="bi bi-lightning-charge-fill"></i></div>
+            <div>
+                <strong>Fleet Analytics</strong>
+                <small>Optimize every kilometre</small>
+            </div>
+        </div>
+    </aside>
 
-                    <div class="col-md-6">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-                        <span>
-
-                            © 2026 TransitOps Fleet Management System
-
-                        </span>
-
-                    </div>
-
-                    <div class="col-md-6 text-end">
-
-                        <span>
-
-                            Developed for Hackathon 🚛
-
-                        </span>
-
-                    </div>
-
+    <main class="app-main">
+        <header class="top-navbar glass-panel">
+            <div class="navbar-title-group">
+                <button class="mobile-menu-btn d-lg-none" id="sidebarToggle" type="button" aria-label="Open sidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div>
+                    <h1>{{ page_title|default('Dashboard') }}</h1>
+                    <p>{{ page_subtitle|default('Smart Fleet Management System') }}</p>
                 </div>
-
             </div>
 
-        </footer>
+            <div class="navbar-actions">
+                <label class="global-search" aria-label="Search">
+                    <i class="bi bi-search"></i>
+                    <input type="search" placeholder="Search fleet data...">
+                </label>
 
-    </div>
+                <button class="icon-button notification-button" type="button" aria-label="Notifications">
+                    <i class="bi bi-bell-fill"></i>
+                    <span class="notification-dot"></span>
+                </button>
 
-</div>
+                <div class="user-profile">
+                    <div class="user-avatar">AM</div>
+                    <div class="user-meta d-none d-sm-block">
+                        <strong>Admin</strong>
+                        <span>Fleet Manager</span>
+                    </div>
+                    <i class="bi bi-chevron-down d-none d-sm-inline"></i>
+                </div>
+            </div>
+        </header>
 
-<!-- ============================= -->
-<!-- Theme Toggle -->
-<!-- ============================= -->
+        <section class="page-content">
+            {% block content %}{% endblock %}
+        </section>
+    </main>
 
-<button
-    id="themeToggle"
-    class="btn btn-primary rounded-circle shadow position-fixed"
-    style="bottom:30px;right:30px;width:55px;height:55px;z-index:999;">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.body;
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebarClose = document.getElementById('sidebarClose');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-    <i class="fa-solid fa-moon"></i>
+            const openSidebar = () => body.classList.add('sidebar-open');
+            const closeSidebar = () => body.classList.remove('sidebar-open');
 
-</button>
+            sidebarToggle?.addEventListener('click', openSidebar);
+            sidebarClose?.addEventListener('click', closeSidebar);
+            sidebarOverlay?.addEventListener('click', closeSidebar);
 
-<!-- ============================= -->
-<!-- Scroll To Top -->
-<!-- ============================= -->
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 992) closeSidebar();
+                });
+            });
 
-<button
-    id="scrollTop"
-    class="btn btn-success rounded-circle shadow position-fixed"
-    style="bottom:95px;right:30px;width:55px;height:55px;display:none;z-index:999;">
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 992) closeSidebar();
+            });
 
-    <i class="fa-solid fa-arrow-up"></i>
-
-</button>
-
-<!-- ============================= -->
-<!-- Bootstrap JS -->
-<!-- ============================= -->
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Chart.js -->
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- jQuery -->
-
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-<!-- Common JavaScript -->
-
-<script>
-
-const themeBtn = document.getElementById("themeToggle");
-
-themeBtn.addEventListener("click", () => {
-
-    document.body.classList.toggle("dark-mode");
-
-    const icon = themeBtn.querySelector("i");
-
-    if(document.body.classList.contains("dark-mode")){
-
-        icon.classList.remove("fa-moon");
-
-        icon.classList.add("fa-sun");
-
-    }
-
-    else{
-
-        icon.classList.remove("fa-sun");
-
-        icon.classList.add("fa-moon");
-
-    }
-
-});
-
-const scrollBtn = document.getElementById("scrollTop");
-
-window.onscroll = function(){
-
-    if(document.documentElement.scrollTop > 200){
-
-        scrollBtn.style.display = "block";
-
-    }
-
-    else{
-
-        scrollBtn.style.display = "none";
-
-    }
-
-};
-
-scrollBtn.onclick = function(){
-
-    window.scrollTo({
-
-        top:0,
-
-        behavior:"smooth"
-
-    });
-
-};
-
-</script>
-
-<!-- Page Specific JS -->
-
-{% block js %}
-
-{% endblock %}
-
+            if (window.Chart) {
+                Chart.defaults.font.family = "Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+                Chart.defaults.color = '#64748b';
+                Chart.defaults.plugins.legend.labels.usePointStyle = true;
+                Chart.defaults.plugins.legend.labels.boxWidth = 8;
+                Chart.defaults.plugins.tooltip.backgroundColor = '#0f172a';
+                Chart.defaults.plugins.tooltip.padding = 12;
+                Chart.defaults.plugins.tooltip.cornerRadius = 10;
+            }
+        });
+    </script>
+    {% block scripts %}{% endblock %}
 </body>
-
 </html>

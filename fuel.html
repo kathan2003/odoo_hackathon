@@ -1,499 +1,152 @@
 {% extends "base.html" %}
 
-{% block title %}
-Fuel Management
-{% endblock %}
-
-{% block breadcrumb %}
-Fuel Management
-{% endblock %}
-
 {% block content %}
-
-<div class="container-fluid fade-up">
-
-    <!-- ========================================= -->
-    <!-- Page Header -->
-    <!-- ========================================= -->
-
-    <div class="row mb-4">
-
-        <div class="col-md-8">
-
-            <h2 class="fw-bold">
-
-                Fuel Management
-
-            </h2>
-
-            <p class="text-muted">
-
-                Record fuel transactions and monitor fuel consumption.
-
-            </p>
-
-        </div>
-
+<div class="page-heading-row">
+    <div>
+        <span class="eyebrow">Fuel intelligence</span>
+        <h2>Fuel consumption overview</h2>
+        <p>Track refills, identify high-consumption vehicles and improve mileage.</p>
     </div>
-
-    <!-- ========================================= -->
-    <!-- Add Fuel Entry -->
-    <!-- ========================================= -->
-
-    <div class="card mb-4">
-
-        <div class="card-header">
-
-            <i class="fa-solid fa-gas-pump"></i>
-
-            Add Fuel Log
-
-        </div>
-
-        <div class="card-body">
-
-            <form action="{{ url_for('reports.fuel_management') }}" method="POST">
-
-                <div class="row">
-
-                    <div class="col-md-4 mb-3">
-
-                        <label>
-
-                            Vehicle
-
-                        </label>
-
-                        <select
-                            name="vehicle_id"
-                            class="form-select"
-                            required>
-
-                            <option value="">
-
-                                Select Vehicle
-
-                            </option>
-
-                            {% for vehicle in vehicles %}
-
-                            <option value="{{ vehicle.id }}">
-
-                                {{ vehicle.registration_number }}
-
-                            </option>
-
-                            {% endfor %}
-
-                        </select>
-
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-
-                        <label>
-
-                            Fuel Amount (Liters)
-
-                        </label>
-
-                        <input
-                            type="number"
-                            step="0.01"
-                            class="form-control"
-                            name="fuel_liters"
-                            placeholder="Enter Fuel"
-                            required>
-
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-
-                        <label>
-
-                            Fuel Cost (₹)
-
-                        </label>
-
-                        <input
-                            type="number"
-                            step="0.01"
-                            class="form-control"
-                            name="fuel_cost"
-                            placeholder="Enter Cost"
-                            required>
-
-                    </div>
-
-                </div>
-
-                <div class="row">
-
-                    <div class="col-md-4 mb-3">
-
-                        <label>
-
-                            Odometer Reading
-
-                        </label>
-
-                        <input
-                            type="number"
-                            class="form-control"
-                            name="odometer"
-                            placeholder="Current KM"
-                            required>
-
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-
-                        <label>
-
-                            Fuel Station
-
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            name="station"
-                            placeholder="Fuel Station">
-
-                    </div>
-
-                    <div class="col-md-4 mb-3">
-
-                        <label>
-
-                            Payment Method
-
-                        </label>
-
-                        <select
-                            class="form-select"
-                            name="payment_method">
-
-                            <option>
-
-                                Cash
-
-                            </option>
-
-                            <option>
-
-                                Card
-
-                            </option>
-
-                            <option>
-
-                                UPI
-
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                </div>
-
-                <button
-                    class="btn btn-success">
-
-                    <i class="fa-solid fa-plus"></i>
-
-                    Save Fuel Log
-
-                </button>
-
-            </form>
-
-        </div>
-
+    <div class="page-actions">
+        <button class="btn btn-soft" type="button"><i class="bi bi-file-earmark-arrow-down"></i> Export</button>
+        <button class="btn btn-gradient" type="button" data-bs-toggle="modal" data-bs-target="#addFuelModal">
+            <i class="bi bi-plus-lg"></i> Add Fuel
+        </button>
     </div>
-        <!-- ========================================= -->
-    <!-- Fuel Summary Cards -->
-    <!-- ========================================= -->
-
-    <div class="row mb-4">
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="dashboard-card success">
-
-                <h6>Total Fuel Used</h6>
-
-                <h2 id="totalFuel">
-
-                    {{ total_fuel or 0 }} L
-
-                </h2>
-
-                <i class="fa-solid fa-gas-pump"></i>
-
-            </div>
-
-        </div>
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="dashboard-card warning">
-
-                <h6>Total Fuel Cost</h6>
-
-                <h2 id="totalCost">
-
-                    ₹{{ total_cost or 0 }}
-
-                </h2>
-
-                <i class="fa-solid fa-wallet"></i>
-
-            </div>
-
-        </div>
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="dashboard-card info">
-
-                <h6>Average Fuel Price</h6>
-
-                <h2>
-
-                    ₹{{ average_price or 0 }}
-
-                </h2>
-
-                <i class="fa-solid fa-chart-line"></i>
-
-            </div>
-
-        </div>
-
-        <div class="col-lg-3 col-md-6">
-
-            <div class="dashboard-card danger">
-
-                <h6>Total Entries</h6>
-
-                <h2>
-
-                    {{ fuel_logs|length }}
-
-                </h2>
-
-                <i class="fa-solid fa-list"></i>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- ========================================= -->
-    <!-- Search -->
-    <!-- ========================================= -->
-
-    <div class="card mb-4">
-
-        <div class="card-body">
-
-            <div class="row">
-
-                <div class="col-md-8">
-
-                    <input
-                        type="text"
-                        id="fuelSearch"
-                        class="form-control"
-                        placeholder="Search Vehicle...">
-
-                </div>
-
-                <div class="col-md-4">
-
-                    <button
-                        class="btn btn-primary w-100">
-
-                        <i class="fa-solid fa-search"></i>
-
-                        Search
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- ========================================= -->
-    <!-- Fuel Log Table -->
-    <!-- ========================================= -->
-
-    <div class="card">
-
-        <div class="card-header d-flex justify-content-between">
-
-            <h5>
-
-                Fuel Logs
-
-            </h5>
-
-            <span class="badge bg-primary">
-
-                {{ fuel_logs|length }} Records
-
-            </span>
-
-        </div>
-
-        <div class="card-body">
-
-            <div class="table-responsive">
-
-                <table
-                    class="table table-hover"
-                    id="fuelTable">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>#</th>
-
-                            <th>Vehicle</th>
-
-                            <th>Fuel (L)</th>
-
-                            <th>Cost</th>
-
-                            <th>Odometer</th>
-
-                            <th>Date</th>
-
-                            <th>Actions</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        {% for fuel in fuel_logs %}
-
-                        <tr>
-
-                            <td>
-
-                                {{ loop.index }}
-
-                            </td>
-
-                            <td>
-
-                                {{ fuel.vehicle.registration_number }}
-
-                            </td>
-
-                            <td>
-
-                                {{ fuel.fuel_liters }}
-
-                            </td>
-
-                            <td>
-
-                                ₹{{ fuel.fuel_cost }}
-
-                            </td>
-
-                            <td>
-
-                                {{ fuel.odometer }}
-
-                            </td>
-
-                            <td>
-
-                                {{ fuel.fuel_date.strftime('%d-%m-%Y') }}
-
-                            </td>
-
-                            <td>
-
-                                <button
-                                    class="btn btn-sm btn-warning">
-
-                                    <i class="fa-solid fa-pen"></i>
-
-                                </button>
-
-                                <button
-                                    class="btn btn-sm btn-danger">
-
-                                    <i class="fa-solid fa-trash"></i>
-
-                                </button>
-
-                            </td>
-
-                        </tr>
-
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-    </div>
-        <!-- ========================================= -->
-    <!-- Pagination -->
-    <!-- ========================================= -->
-
-    <div class="mt-4 d-flex justify-content-center">
-
-        <nav>
-
-            <ul class="pagination">
-
-                <li class="page-item disabled">
-                    <a class="page-link" href="#">Previous</a>
-                </li>
-
-                <li class="page-item active">
-                    <a class="page-link" href="#">1</a>
-                </li>
-
-                <li class="page-item">
-                    <a class="page-link" href="#">2</a>
-                </li>
-
-                <li class="page-item">
-                    <a class="page-link" href="#">Next</a>
-                </li>
-
-            </ul>
-
-        </nav>
-
-    </div>
-
 </div>
 
+<div class="row g-4 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <article class="kpi-card glass-card accent-cyan">
+            <div class="kpi-icon"><i class="bi bi-droplet-fill"></i></div>
+            <div class="kpi-content"><span>Total Fuel Used</span><strong>{{ stats.total_used }}</strong><small>Across all fleet vehicles</small></div>
+        </article>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-3">
+        <article class="kpi-card glass-card accent-orange">
+            <div class="kpi-icon"><i class="bi bi-currency-rupee"></i></div>
+            <div class="kpi-content"><span>Fuel Cost</span><strong>{{ stats.fuel_cost }}</strong><small>Current month spend</small></div>
+        </article>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-3">
+        <article class="kpi-card glass-card accent-green">
+            <div class="kpi-icon"><i class="bi bi-speedometer"></i></div>
+            <div class="kpi-content"><span>Average Mileage</span><strong>{{ stats.average_mileage }}</strong><small>Fleet-wide efficiency</small></div>
+        </article>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-3">
+        <article class="kpi-card glass-card accent-purple">
+            <div class="kpi-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+            <div class="kpi-content"><span>Most Consuming</span><strong class="compact-value">{{ stats.most_consuming_vehicle }}</strong><small>Review route and driving pattern</small></div>
+        </article>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-12 col-xl-8">
+        <article class="chart-card glass-card h-100">
+            <div class="card-heading">
+                <div><h3>Fuel Cost Trend</h3><p>Monthly fuel spending versus budget</p></div>
+                <span class="status-chip">Last 6 months</span>
+            </div>
+            <div class="chart-box"><canvas id="fuelCostChart"></canvas></div>
+        </article>
+    </div>
+    <div class="col-12 col-xl-4">
+        <article class="chart-card glass-card h-100">
+            <div class="card-heading">
+                <div><h3>Fuel Distribution</h3><p>Consumption by vehicle category</p></div>
+            </div>
+            <div class="chart-box"><canvas id="fuelDistributionChart"></canvas></div>
+        </article>
+    </div>
+</div>
+
+<article class="table-card glass-card">
+    <div class="card-heading table-heading-wrap">
+        <div><h3>Fuel Records</h3><p>Recent refill entries and mileage performance</p></div>
+        <div class="table-tools">
+            <label class="table-search"><i class="bi bi-search"></i><input type="search" placeholder="Search records"></label>
+            <select class="form-select compact-select" aria-label="Filter vehicle">
+                <option selected>All Vehicles</option><option>GJ01AB1234</option><option>GJ01CD5678</option>
+            </select>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table app-table align-middle mb-0">
+            <thead><tr><th>Date</th><th>Vehicle</th><th>Driver</th><th>Fuel</th><th>Cost</th><th>Mileage</th><th>Station</th><th class="text-end">Action</th></tr></thead>
+            <tbody>
+                {% for record in fuel_records %}
+                <tr>
+                    <td>{{ record.date }}</td>
+                    <td><span class="vehicle-cell"><i class="bi bi-truck-front"></i>{{ record.vehicle }}</span></td>
+                    <td>{{ record.driver }}</td>
+                    <td>{{ record.fuel }}</td>
+                    <td><strong>{{ record.cost }}</strong></td>
+                    <td><span class="app-badge badge-success">{{ record.mileage }}</span></td>
+                    <td>{{ record.station }}</td>
+                    <td class="text-end">
+                        <button class="table-action" type="button" aria-label="Edit"><i class="bi bi-pencil"></i></button>
+                        <button class="table-action danger" type="button" aria-label="Delete"><i class="bi bi-trash3"></i></button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</article>
+
+<div class="modal fade" id="addFuelModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-modal">
+            <div class="modal-header"><h5 class="modal-title">Add Fuel Record</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <form>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-12 col-sm-6"><label class="form-label">Vehicle</label><select class="form-select"><option>GJ01AB1234</option><option>GJ01CD5678</option></select></div>
+                        <div class="col-12 col-sm-6"><label class="form-label">Date</label><input class="form-control" type="date"></div>
+                        <div class="col-12 col-sm-6"><label class="form-label">Fuel quantity (L)</label><input class="form-control" type="number" min="0" placeholder="Enter litres"></div>
+                        <div class="col-12 col-sm-6"><label class="form-label">Total cost</label><input class="form-control" type="number" min="0" placeholder="Enter amount"></div>
+                        <div class="col-12"><label class="form-label">Fuel station</label><input class="form-control" type="text" placeholder="Enter fuel station"></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-soft" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-gradient">Save Record</button></div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
-{% block js %}
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const costCanvas = document.getElementById('fuelCostChart');
+    if (costCanvas) {
+        const ctx = costCanvas.getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, 'rgba(6, 182, 212, .32)');
+        gradient.addColorStop(1, 'rgba(6, 182, 212, .02)');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [
+                    { label: 'Actual Cost (₹ Lakh)', data: [15.2, 16.1, 15.7, 17.4, 17.1, 17.82], borderColor: '#06B6D4', backgroundColor: gradient, fill: true, tension: .42, borderWidth: 3, pointRadius: 4 },
+                    { label: 'Budget (₹ Lakh)', data: [16, 16, 16.5, 17, 17.5, 18], borderColor: '#9333EA', borderDash: [7, 6], tension: .35, borderWidth: 2, pointRadius: 0 }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { position: 'top', align: 'end' } }, scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(148,163,184,.16)' } } } }
+        });
+    }
 
-<script src="{{ url_for('static', filename='js/fuel.js') }}"></script>
-
+    const distributionCanvas = document.getElementById('fuelDistributionChart');
+    if (distributionCanvas) {
+        new Chart(distributionCanvas, {
+            type: 'doughnut',
+            data: { labels: ['Heavy Trucks', 'Light Commercial', 'Utility', 'Passenger'], datasets: [{ data: [46, 29, 16, 9], backgroundColor: ['#2563EB', '#06B6D4', '#22C55E', '#F97316'], borderWidth: 0, hoverOffset: 8 }] },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '64%', plugins: { legend: { position: 'bottom' } } }
+        });
+    }
+});
+</script>
 {% endblock %}
