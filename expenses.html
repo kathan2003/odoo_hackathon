@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-heading-row">
+    <div>
+        <span class="eyebrow">Cost control</span>
+        <h2>Fleet expense management</h2>
+        <p>Review operating costs, approve transactions and identify spending patterns.</p>
+    </div>
+    <div class="page-actions">
+        <button class="btn btn-soft" type="button"><i class="bi bi-file-earmark-spreadsheet"></i> CSV</button>
+        <button class="btn btn-gradient" type="button" data-bs-toggle="modal" data-bs-target="#addExpenseModal"><i class="bi bi-plus-lg"></i> Add Expense</button>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3"><article class="kpi-card glass-card accent-blue"><div class="kpi-icon"><i class="bi bi-wallet2"></i></div><div class="kpi-content"><span>Total Expenses</span><strong>{{ stats.total }}</strong><small>Current month operating cost</small></div></article></div>
+    <div class="col-12 col-sm-6 col-xl-3"><article class="kpi-card glass-card accent-orange"><div class="kpi-icon"><i class="bi bi-fuel-pump-fill"></i></div><div class="kpi-content"><span>Fuel Expense</span><strong>{{ stats.fuel }}</strong><small>71.7% of total expenses</small></div></article></div>
+    <div class="col-12 col-sm-6 col-xl-3"><article class="kpi-card glass-card accent-purple"><div class="kpi-icon"><i class="bi bi-tools"></i></div><div class="kpi-content"><span>Maintenance</span><strong>{{ stats.maintenance }}</strong><small>Scheduled and repair costs</small></div></article></div>
+    <div class="col-12 col-sm-6 col-xl-3"><article class="kpi-card glass-card accent-green"><div class="kpi-icon"><i class="bi bi-receipt-cutoff"></i></div><div class="kpi-content"><span>Other Expense</span><strong>{{ stats.other }}</strong><small>Toll, insurance and miscellaneous</small></div></article></div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-12 col-xl-5">
+        <article class="chart-card glass-card h-100">
+            <div class="card-heading"><div><h3>Expense Breakdown</h3><p>Share of total operating expense</p></div></div>
+            <div class="chart-box"><canvas id="expenseBreakdownChart"></canvas></div>
+        </article>
+    </div>
+    <div class="col-12 col-xl-7">
+        <article class="chart-card glass-card h-100">
+            <div class="card-heading"><div><h3>Monthly Expense Trend</h3><p>Six-month category-wise cost movement</p></div><span class="status-chip">FY 2026–27</span></div>
+            <div class="chart-box"><canvas id="expenseTrendChart"></canvas></div>
+        </article>
+    </div>
+</div>
+
+<article class="table-card glass-card">
+    <div class="card-heading table-heading-wrap">
+        <div><h3>Expense Records</h3><p>Recent transactions and approval status</p></div>
+        <div class="table-tools">
+            <label class="table-search"><i class="bi bi-search"></i><input type="search" placeholder="Search expense"></label>
+            <select class="form-select compact-select"><option>All Categories</option><option>Fuel</option><option>Maintenance</option><option>Insurance</option></select>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table app-table align-middle mb-0">
+            <thead><tr><th>Date</th><th>Vehicle</th><th>Category</th><th>Description</th><th>Amount</th><th>Payment</th><th>Status</th><th class="text-end">Action</th></tr></thead>
+            <tbody>
+                {% for record in expense_records %}
+                <tr>
+                    <td>{{ record.date }}</td>
+                    <td><span class="vehicle-cell"><i class="bi bi-truck-front"></i>{{ record.vehicle }}</span></td>
+                    <td>{{ record.category }}</td>
+                    <td>{{ record.description }}</td>
+                    <td><strong>{{ record.amount }}</strong></td>
+                    <td>{{ record.payment }}</td>
+                    <td>
+                        {% set status_class = 'success' if record.status == 'Completed' else ('warning' if record.status == 'Pending' else 'info') %}
+                        <span class="app-badge badge-{{ status_class }}">{{ record.status }}</span>
+                    </td>
+                    <td class="text-end"><button class="table-action" type="button"><i class="bi bi-pencil"></i></button><button class="table-action danger" type="button"><i class="bi bi-trash3"></i></button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</article>
+
+<div class="modal fade" id="addExpenseModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-modal">
+            <div class="modal-header"><h5 class="modal-title">Add Expense</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <form>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-12 col-sm-6"><label class="form-label">Vehicle</label><select class="form-select"><option>GJ01AB1234</option><option>GJ01CD5678</option></select></div>
+                        <div class="col-12 col-sm-6"><label class="form-label">Category</label><select class="form-select"><option>Fuel</option><option>Maintenance</option><option>Insurance</option><option>Other</option></select></div>
+                        <div class="col-12 col-sm-6"><label class="form-label">Date</label><input class="form-control" type="date"></div>
+                        <div class="col-12 col-sm-6"><label class="form-label">Amount</label><input class="form-control" type="number" min="0" placeholder="Enter amount"></div>
+                        <div class="col-12"><label class="form-label">Description</label><textarea class="form-control" rows="3" placeholder="Expense details"></textarea></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-soft" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-gradient">Save Expense</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const breakdownCanvas = document.getElementById('expenseBreakdownChart');
+    if (breakdownCanvas) {
+        new Chart(breakdownCanvas, {
+            type: 'pie',
+            data: { labels: ['Fuel', 'Maintenance', 'Insurance', 'Toll & Other'], datasets: [{ data: [71.7, 19.9, 5.4, 3], backgroundColor: ['#2563EB', '#9333EA', '#F97316', '#22C55E'], borderColor: '#ffffff', borderWidth: 3, hoverOffset: 8 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        });
+    }
+
+    const trendCanvas = document.getElementById('expenseTrendChart');
+    if (trendCanvas) {
+        new Chart(trendCanvas, {
+            type: 'bar',
+            data: {
+                labels: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [
+                    { label: 'Fuel', data: [15.2, 16.1, 15.7, 17.4, 17.1, 17.82], backgroundColor: '#2563EB', borderRadius: 7 },
+                    { label: 'Maintenance', data: [3.4, 4.1, 3.7, 5.6, 4.2, 4.95], backgroundColor: '#9333EA', borderRadius: 7 },
+                    { label: 'Other', data: [1.7, 1.5, 2.1, 1.8, 2.4, 2.08], backgroundColor: '#22C55E', borderRadius: 7 }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', align: 'end' } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: 'rgba(148,163,184,.16)' } } } }
+        });
+    }
+});
+</script>
+{% endblock %}

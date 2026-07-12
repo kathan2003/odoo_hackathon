@@ -11,7 +11,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='css/dark-theme.css') }}">
 </head>
 <body>
     {% set current_path = request.path.rstrip('/') or '/' %}
@@ -22,13 +25,6 @@
                 <span class="brand-icon"><i class="bi bi-truck-front-fill"></i></span>
                 <span class="brand-text">Transit<span>Ops</span></span>
             </a>
-            <a
-    href="{{ url_for('expense') }}"
-    class="sidebar-link {% if request.endpoint == 'expense' %}active{% endif %}"
->
-    <i class="bi bi-wallet2"></i>
-    <span>Expenses</span>
-</a>
             <button class="sidebar-close d-lg-none" id="sidebarClose" type="button" aria-label="Close sidebar">
                 <i class="bi bi-x-lg"></i>
             </button>
@@ -42,9 +38,11 @@
             <a class="sidebar-link {% if current_path == '/fuel' %}active{% endif %}" href="{{ url_for('fuel') }}">
                 <i class="bi bi-fuel-pump-fill"></i><span>Fuel Management</span>
             </a>
-            <a class="sidebar-link {% if current_path == '/expense' %}active{% endif %}" href="{{ url_for('expense') }}">
-                <i class="bi bi-wallet2"></i><span>Expenses</span>
-            </a>
+            <a href="{{ url_for('expense') }}"
+   class="sidebar-link {% if request.endpoint == 'expense' %}active{% endif %}">
+    <i class="bi bi-wallet2"></i>
+    <span>Expenses</span>
+</a>
             <a class="sidebar-link {% if current_path == '/reports' %}active{% endif %}" href="{{ url_for('reports') }}">
                 <i class="bi bi-bar-chart-line-fill"></i><span>Reports Analytics</span>
             </a>

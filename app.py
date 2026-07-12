@@ -192,22 +192,13 @@ def expense():
             "status": "Completed",
         },
         {
-            "date": "09 Jul 2026",
+            "date": "9 Jul 2026",
             "vehicle": "GJ18GH3456",
             "category": "Toll",
             "description": "FASTag recharge",
             "amount": "₹5,000",
             "payment": "UPI",
             "status": "Completed",
-        },
-        {
-            "date": "08 Jul 2026",
-            "vehicle": "GJ27JK7890",
-            "category": "Maintenance",
-            "description": "Tyre replacement",
-            "amount": "₹28,400",
-            "payment": "Card",
-            "status": "Approved",
         },
     ]
 
