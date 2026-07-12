@@ -1,0 +1,451 @@
+{% extends "base.html" %}
+
+{% block title %}
+Expense Management
+{% endblock %}
+
+{% block breadcrumb %}
+Expense Management
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid fade-up">
+
+    <!-- ========================================= -->
+    <!-- Page Header -->
+    <!-- ========================================= -->
+
+    <div class="row mb-4">
+
+        <div class="col-md-8">
+
+            <h2 class="fw-bold">
+
+                Expense Management
+
+            </h2>
+
+            <p class="text-muted">
+
+                Track operational expenses for your fleet.
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- ========================================= -->
+    <!-- Expense Entry Form -->
+    <!-- ========================================= -->
+
+    <div class="card mb-4">
+
+        <div class="card-header">
+
+            <i class="fa-solid fa-wallet"></i>
+
+            Add Expense
+
+        </div>
+
+        <div class="card-body">
+
+            <form
+                action="{{ url_for('reports.expense_tracking') }}"
+                method="POST">
+
+                <div class="row">
+
+                    <div class="col-md-4 mb-3">
+
+                        <label>Vehicle</label>
+
+                        <select
+                            class="form-select"
+                            name="vehicle_id">
+
+                            <option value="">
+
+                                General Expense
+
+                            </option>
+
+                            {% for vehicle in vehicles %}
+
+                            <option value="{{ vehicle.id }}">
+
+                                {{ vehicle.registration_number }}
+
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+
+                        <label>Expense Type</label>
+
+                        <select
+                            class="form-select"
+                            name="expense_type"
+                            required>
+
+                            <option>Fuel</option>
+
+                            <option>Maintenance</option>
+
+                            <option>Insurance</option>
+
+                            <option>Tyres</option>
+
+                            <option>Repair</option>
+
+                            <option>Tax</option>
+
+                            <option>Other</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+
+                        <label>Amount</label>
+
+                        <input
+                            type="number"
+                            step="0.01"
+                            class="form-control"
+                            name="amount"
+                            required>
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-12 mb-3">
+
+                        <label>Description</label>
+
+                        <textarea
+                            class="form-control"
+                            rows="3"
+                            name="description"></textarea>
+
+                    </div>
+
+                </div>
+
+                <button class="btn btn-primary">
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    Save Expense
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+        <!-- ========================================= -->
+    <!-- Summary Cards -->
+    <!-- ========================================= -->
+
+    <div class="row mb-4">
+
+        <div class="col-lg-3">
+
+            <div class="dashboard-card success">
+
+                <h6>Total Expenses</h6>
+
+                <h2>
+
+                    ₹{{ total_expense or 0 }}
+
+                </h2>
+
+                <i class="fa-solid fa-money-bill-wave"></i>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3">
+
+            <div class="dashboard-card info">
+
+                <h6>This Month</h6>
+
+                <h2>
+
+                    ₹{{ monthly_expense or 0 }}
+
+                </h2>
+
+                <i class="fa-solid fa-calendar"></i>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3">
+
+            <div class="dashboard-card warning">
+
+                <h6>Average Expense</h6>
+
+                <h2>
+
+                    ₹{{ average_expense or 0 }}
+
+                </h2>
+
+                <i class="fa-solid fa-chart-column"></i>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3">
+
+            <div class="dashboard-card danger">
+
+                <h6>Total Records</h6>
+
+                <h2>
+
+                    {{ expenses|length }}
+
+                </h2>
+
+                <i class="fa-solid fa-list"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ========================================= -->
+    <!-- Search -->
+    <!-- ========================================= -->
+
+    <div class="card mb-4">
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-9">
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="expenseSearch"
+                        placeholder="Search Expense">
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <button
+                        class="btn btn-success w-100">
+
+                        <i class="fa-solid fa-search"></i>
+
+                        Search
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ========================================= -->
+    <!-- Expense Table -->
+    <!-- ========================================= -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            Expense Records
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table
+                    class="table table-hover"
+                    id="expenseTable">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>#</th>
+
+                            <th>Vehicle</th>
+
+                            <th>Type</th>
+
+                            <th>Amount</th>
+
+                            <th>Date</th>
+
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for expense in expenses %}
+
+                        <tr>
+
+                            <td>
+
+                                {{ loop.index }}
+
+                            </td>
+
+                            <td>
+
+                                {% if expense.vehicle %}
+
+                                {{ expense.vehicle.registration_number }}
+
+                                {% else %}
+
+                                General
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {{ expense.expense_type }}
+
+                            </td>
+
+                            <td>
+
+                                ₹{{ expense.amount }}
+
+                            </td>
+
+                            <td>
+
+                                {{ expense.expense_date.strftime('%d-%m-%Y') }}
+
+                            </td>
+
+                            <td>
+
+                                <button class="btn btn-warning btn-sm">
+
+                                    <i class="fa-solid fa-pen"></i>
+
+                                </button>
+
+                                <button class="btn btn-danger btn-sm">
+
+                                    <i class="fa-solid fa-trash"></i>
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+        <!-- ========================================= -->
+    <!-- Pagination -->
+    <!-- ========================================= -->
+
+    <div class="mt-4 d-flex justify-content-center">
+
+        <ul class="pagination">
+
+            <li class="page-item disabled">
+
+                <a class="page-link">
+
+                    Previous
+
+                </a>
+
+            </li>
+
+            <li class="page-item active">
+
+                <a class="page-link">
+
+                    1
+
+                </a>
+
+            </li>
+
+            <li class="page-item">
+
+                <a class="page-link">
+
+                    2
+
+                </a>
+
+            </li>
+
+            <li class="page-item">
+
+                <a class="page-link">
+
+                    Next
+
+                </a>
+
+            </li>
+
+        </ul>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script src="{{ url_for('static', filename='js/expense.js') }}"></script>
+
+{% endblock %}

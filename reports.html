@@ -1,0 +1,863 @@
+{% extends "base.html" %}
+
+{% block title %}
+Reports Dashboard
+{% endblock %}
+
+{% block breadcrumb %}
+Reports Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid fade-up">
+
+    <!-- ========================================= -->
+    <!-- Page Header -->
+    <!-- ========================================= -->
+
+    <div class="row mb-4">
+
+        <div class="col-md-8">
+
+            <h2 class="fw-bold">
+
+                Fleet Analytics Dashboard
+
+            </h2>
+
+            <p class="text-muted">
+
+                Monitor fleet expenses, fuel consumption, operational cost and ROI.
+
+            </p>
+
+        </div>
+
+        <div class="col-md-4 text-end">
+
+            <a href="/reports/export/csv" class="btn btn-success">
+
+                <i class="fa-solid fa-file-csv"></i>
+
+                Export CSV
+
+            </a>
+
+            <a href="/reports/export/pdf" class="btn btn-danger">
+
+                <i class="fa-solid fa-file-pdf"></i>
+
+                Export PDF
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- Dashboard Cards -->
+    <!-- ========================================= -->
+
+    <div class="row">
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="dashboard-card success">
+
+                <h6>Total Vehicles</h6>
+
+                <h2 id="vehicleCount">
+
+                    {{ dashboard.total_vehicles }}
+
+                </h2>
+
+                <i class="fa-solid fa-truck"></i>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="dashboard-card info">
+
+                <h6>Fleet Utilization</h6>
+
+                <h2 id="fleetUtilization">
+
+                    {{ dashboard.fleet_utilization }}%
+
+                </h2>
+
+                <i class="fa-solid fa-chart-pie"></i>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="dashboard-card warning">
+
+                <h6>Total Fuel Cost</h6>
+
+                <h2 id="fuelCost">
+
+                    ₹{{ dashboard.total_fuel_cost }}
+
+                </h2>
+
+                <i class="fa-solid fa-gas-pump"></i>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="dashboard-card danger">
+
+                <h6>Operational Cost</h6>
+
+                <h2 id="operationCost">
+
+                    ₹{{ dashboard.operational_cost }}
+
+                </h2>
+
+                <i class="fa-solid fa-wallet"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- Search & Filter -->
+    <!-- ========================================= -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            Search Reports
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-4">
+
+                    <input
+
+                        type="text"
+
+                        id="searchVehicle"
+
+                        class="form-control"
+
+                        placeholder="Search Vehicle">
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <select
+
+                        class="form-select"
+
+                        id="filterStatus">
+
+                        <option value="">
+
+                            All Status
+
+                        </option>
+
+                        <option>
+
+                            Available
+
+                        </option>
+
+                        <option>
+
+                            On Trip
+
+                        </option>
+
+                        <option>
+
+                            In Shop
+
+                        </option>
+
+                        <option>
+
+                            Retired
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <select
+
+                        class="form-select"
+
+                        id="filterExpense">
+
+                        <option value="">
+
+                            Expense Type
+
+                        </option>
+
+                        <option>
+
+                            Fuel
+
+                        </option>
+
+                        <option>
+
+                            Maintenance
+
+                        </option>
+
+                        <option>
+
+                            Insurance
+
+                        </option>
+
+                        <option>
+
+                            Other
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <button
+
+                        class="btn btn-primary w-100"
+
+                        id="searchBtn">
+
+                        <i class="fa-solid fa-search"></i>
+
+                        Search
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- Summary Cards -->
+    <!-- ========================================= -->
+
+    <div class="row mt-4">
+
+        <div class="col-md-3">
+
+            <div class="summary-box">
+
+                <div>
+
+                    <span>
+
+                        Available
+
+                    </span>
+
+                    <h4>
+
+                        {{ dashboard.available_vehicles }}
+
+                    </h4>
+
+                </div>
+
+                <i class="fa-solid fa-circle-check"></i>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="summary-box">
+
+                <div>
+
+                    <span>
+
+                        On Trip
+
+                    </span>
+
+                    <h4>
+
+                        {{ dashboard.on_trip }}
+
+                    </h4>
+
+                </div>
+
+                <i class="fa-solid fa-road"></i>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="summary-box">
+
+                <div>
+
+                    <span>
+
+                        Maintenance
+
+                    </span>
+
+                    <h4>
+
+                        ₹{{ dashboard.maintenance_cost }}
+
+                    </h4>
+
+                </div>
+
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="summary-box">
+
+                <div>
+
+                    <span>
+
+                        Total Expense
+
+                    </span>
+
+                    <h4>
+
+                        ₹{{ dashboard.total_expense }}
+
+                    </h4>
+
+                </div>
+
+                <i class="fa-solid fa-money-bill-wave"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+        <!-- ========================================= -->
+    <!-- Analytics Charts -->
+    <!-- ========================================= -->
+
+    <div class="row mt-4">
+
+        <!-- Fuel Cost Chart -->
+
+        <div class="col-lg-6">
+
+            <div class="chart-card">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                    <h5>
+
+                        <i class="fa-solid fa-gas-pump text-primary"></i>
+
+                        Fuel Cost Analysis
+
+                    </h5>
+
+                    <span class="badge bg-primary">
+
+                        Per Vehicle
+
+                    </span>
+
+                </div>
+
+                <div class="chart-container">
+
+                    <canvas id="fuelCostChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Expense Breakdown -->
+
+        <div class="col-lg-6">
+
+            <div class="chart-card">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                    <h5>
+
+                        <i class="fa-solid fa-wallet text-success"></i>
+
+                        Expense Breakdown
+
+                    </h5>
+
+                    <span class="badge bg-success">
+
+                        Categories
+
+                    </span>
+
+                </div>
+
+                <div class="chart-container">
+
+                    <canvas id="expenseChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- Second Row Charts -->
+    <!-- ========================================= -->
+
+    <div class="row mt-3">
+
+        <!-- Fleet Utilization -->
+
+        <div class="col-lg-6">
+
+            <div class="chart-card">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                    <h5>
+
+                        <i class="fa-solid fa-chart-pie text-warning"></i>
+
+                        Fleet Utilization
+
+                    </h5>
+
+                </div>
+
+                <div class="chart-container">
+
+                    <canvas id="utilizationChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ROI -->
+
+        <div class="col-lg-6">
+
+            <div class="chart-card">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                    <h5>
+
+                        <i class="fa-solid fa-chart-line text-danger"></i>
+
+                        Vehicle ROI
+
+                    </h5>
+
+                </div>
+
+                <div class="chart-container">
+
+                    <canvas id="roiChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- Monthly Trend -->
+    <!-- ========================================= -->
+
+    <div class="row mt-3">
+
+        <div class="col-12">
+
+            <div class="chart-card">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                    <h5>
+
+                        <i class="fa-solid fa-chart-area text-info"></i>
+
+                        Monthly Fuel Cost Trend
+
+                    </h5>
+
+                    <span class="badge bg-info">
+
+                        Last 12 Months
+
+                    </span>
+
+                </div>
+
+                <div class="chart-container">
+
+                    <canvas id="fuelTrendChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- Analytics Summary -->
+    <!-- ========================================= -->
+
+    <div class="row mt-4">
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card text-center shadow-sm">
+
+                <div class="card-body">
+
+                    <i class="fa-solid fa-road fa-3x text-primary mb-3"></i>
+
+                    <h4 id="totalDistance">
+
+                        0 KM
+
+                    </h4>
+
+                    <p class="text-muted">
+
+                        Total Distance Covered
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card text-center shadow-sm">
+
+                <div class="card-body">
+
+                    <i class="fa-solid fa-gas-pump fa-3x text-success mb-3"></i>
+
+                    <h4 id="fuelEfficiency">
+
+                        0 km/L
+
+                    </h4>
+
+                    <p class="text-muted">
+
+                        Average Fuel Efficiency
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card text-center shadow-sm">
+
+                <div class="card-body">
+
+                    <i class="fa-solid fa-indian-rupee-sign fa-3x text-danger mb-3"></i>
+
+                    <h4 id="revenue">
+
+                        ₹0
+
+                    </h4>
+
+                    <p class="text-muted">
+
+                        Total Revenue
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card text-center shadow-sm">
+
+                <div class="card-body">
+
+                    <i class="fa-solid fa-percent fa-3x text-warning mb-3"></i>
+
+                    <h4 id="averageROI">
+
+                        0%
+
+                    </h4>
+
+                    <p class="text-muted">
+
+                        Average ROI
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+        <!-- ========================================= -->
+    <!-- Reports Table -->
+    <!-- ========================================= -->
+
+    <div class="row mt-4">
+
+        <div class="col-12">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header d-flex justify-content-between align-items-center">
+
+                    <h5 class="mb-0">
+
+                        <i class="fa-solid fa-table"></i>
+
+                        Fleet Analytics Report
+
+                    </h5>
+
+                    <span class="badge bg-primary">
+
+                        {{ report_data|length }} Vehicles
+
+                    </span>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="table-responsive">
+
+                        <table
+                            class="table table-hover align-middle"
+                            id="reportTable">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Vehicle</th>
+
+                                    <th>Fuel Cost</th>
+
+                                    <th>Operational Cost</th>
+
+                                    <th>Fuel Efficiency</th>
+
+                                    <th>ROI</th>
+
+                                    <th>Status</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                {% for report in report_data %}
+
+                                <tr>
+
+                                    <td>
+
+                                        <strong>
+
+                                            {{ report.vehicle.registration_number }}
+
+                                        </strong>
+
+                                    </td>
+
+                                    <td>
+
+                                        ₹{{ report.fuel_cost }}
+
+                                    </td>
+
+                                    <td>
+
+                                        ₹{{ report.op_cost }}
+
+                                    </td>
+
+                                    <td>
+
+                                        {{ report.efficiency }} km/L
+
+                                    </td>
+
+                                    <td>
+
+                                        {% if report.roi >= 0 %}
+
+                                        <span class="badge bg-success">
+
+                                            {{ report.roi }}%
+
+                                        </span>
+
+                                        {% else %}
+
+                                        <span class="badge bg-danger">
+
+                                            {{ report.roi }}%
+
+                                        </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+
+                                        {% if report.vehicle.status == "Available" %}
+
+                                        <span class="badge bg-success">
+
+                                            Available
+
+                                        </span>
+
+                                        {% elif report.vehicle.status == "On Trip" %}
+
+                                        <span class="badge bg-warning">
+
+                                            On Trip
+
+                                        </span>
+
+                                        {% elif report.vehicle.status == "In Shop" %}
+
+                                        <span class="badge bg-danger">
+
+                                            In Shop
+
+                                        </span>
+
+                                        {% else %}
+
+                                        <span class="badge bg-secondary">
+
+                                            Retired
+
+                                        </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+<!-- ========================================= -->
+<!-- Page JavaScript -->
+<!-- ========================================= -->
+
+{% block js %}
+
+<script src="{{ url_for('static', filename='js/reports.js') }}"></script>
+
+{% endblock %}

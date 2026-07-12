@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>
+
+        {% block title %}
+
+        TransitOps
+
+        {% endblock %}
+
+    </title>
+
+    <!-- Bootstrap -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Font Awesome -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Google Font -->
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Custom CSS -->
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}">
+
+    {% block css %}
+
+    {% endblock %}
+
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<!-- ============================= -->
+<!-- Sidebar -->
+<!-- ============================= -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <i class="fa-solid fa-truck-fast"></i>
+
+        <span>
+
+            TransitOps
+
+        </span>
+
+    </div>
+
+    <ul>
+
+        <li>
+
+            <a href="/">
+
+                <i class="fa-solid fa-house"></i>
+
+                Dashboard
+
+            </a>
+
+        </li>
+
+        <li>
+
+            <a href="/fuel">
+
+                <i class="fa-solid fa-gas-pump"></i>
+
+                Fuel Logs
+
+            </a>
+
+        </li>
+
+        <li>
+
+            <a href="/expenses">
+
+                <i class="fa-solid fa-wallet"></i>
+
+                Expenses
+
+            </a>
+
+        </li>
+
+        <li>
+
+            <a href="/reports">
+
+                <i class="fa-solid fa-chart-line"></i>
+
+                Reports
+
+            </a>
+
+        </li>
+
+        <li>
+
+            <a href="#">
+
+                <i class="fa-solid fa-download"></i>
+
+                Export CSV
+
+            </a>
+
+        </li>
+
+        <li>
+
+            <a href="#">
+
+                <i class="fa-solid fa-file-pdf"></i>
+
+                Export PDF
+
+            </a>
+
+        </li>
+
+    </ul>
+
+</aside>
+
+<!-- ============================= -->
+<!-- Main Content -->
+<!-- ============================= -->
+
+<div class="main-content">
+
+<!-- Navbar -->
+
+<nav class="navbar navbar-expand-lg">
+
+<div class="container-fluid">
+
+<div>
+
+<h3>
+
+Fleet Analytics Dashboard
+
+</h3>
+
+<p>
+
+Manage Fleet Expenses & Reports
+
+</p>
+
+</div>
+
+<div class="d-flex align-items-center">
+
+<button
+class="btn btn-light position-relative me-3">
+
+<i class="fa-solid fa-bell"></i>
+
+<span
+class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+
+3
+
+</span>
+
+</button>
+
+<div class="dropdown">
+
+<a
+class="dropdown-toggle text-decoration-none text-dark"
+data-bs-toggle="dropdown">
+
+<img
+src="https://ui-avatars.com/api/?name=Fleet+Admin&background=0D8ABC&color=fff"
+class="rounded-circle"
+width="45">
+
+Fleet Manager
+
+</a>
+
+<ul class="dropdown-menu dropdown-menu-end">
+
+<li>
+
+<a class="dropdown-item">
+
+Profile
+
+</a>
+
+</li>
+
+<li>
+
+<a class="dropdown-item">
+
+Settings
+
+</a>
+
+</li>
+
+<li>
+
+<hr>
+
+</li>
+
+<li>
+
+<a class="dropdown-item">
+
+Logout
+
+</a>
+
+</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</div>
+
+</nav>
+
+<!-- ============================= -->
+<!-- Breadcrumb -->
+<!-- ============================= -->
+
+<div class="container-fluid mt-4">
+
+<div class="row">
+
+<div class="col-12">
+
+<nav>
+
+<ol class="breadcrumb">
+
+<li class="breadcrumb-item">
+
+<a href="/">
+
+Dashboard
+
+</a>
+
+</li>
+
+<li class="breadcrumb-item active">
+
+{% block breadcrumb %}
+
+Home
+
+{% endblock %}
+
+</li>
+
+</ol>
+
+</nav>
+
+</div>
+
+</div>
+
+<!-- ============================= -->
+<!-- Main Page -->
+<!-- ============================= -->
+
+<div class="row">
+
+<div class="col-12">
+
+{% block content %}
+
+<!-- Child pages -->
+
+{% endblock %}
+                </div>
+            </div>
+
+            <!-- ============================= -->
+            <!-- Flash Messages -->
+            <!-- ============================= -->
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+
+                    <div class="row mt-3">
+
+                        <div class="col-12">
+
+                            {% for category, message in messages %}
+
+                                <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm">
+
+                                    {{ message }}
+
+                                    <button
+                                        type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="alert">
+                                    </button>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+            {% endwith %}
+
+        </div>
+
+        <!-- ============================= -->
+        <!-- Footer -->
+        <!-- ============================= -->
+
+        <footer class="footer mt-auto py-3">
+
+            <div class="container-fluid">
+
+                <div class="row align-items-center">
+
+                    <div class="col-md-6">
+
+                        <span>
+
+                            © 2026 TransitOps Fleet Management System
+
+                        </span>
+
+                    </div>
+
+                    <div class="col-md-6 text-end">
+
+                        <span>
+
+                            Developed for Hackathon 🚛
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </footer>
+
+    </div>
+
+</div>
+
+<!-- ============================= -->
+<!-- Theme Toggle -->
+<!-- ============================= -->
+
+<button
+    id="themeToggle"
+    class="btn btn-primary rounded-circle shadow position-fixed"
+    style="bottom:30px;right:30px;width:55px;height:55px;z-index:999;">
+
+    <i class="fa-solid fa-moon"></i>
+
+</button>
+
+<!-- ============================= -->
+<!-- Scroll To Top -->
+<!-- ============================= -->
+
+<button
+    id="scrollTop"
+    class="btn btn-success rounded-circle shadow position-fixed"
+    style="bottom:95px;right:30px;width:55px;height:55px;display:none;z-index:999;">
+
+    <i class="fa-solid fa-arrow-up"></i>
+
+</button>
+
+<!-- ============================= -->
+<!-- Bootstrap JS -->
+<!-- ============================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Chart.js -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- jQuery -->
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<!-- Common JavaScript -->
+
+<script>
+
+const themeBtn = document.getElementById("themeToggle");
+
+themeBtn.addEventListener("click", () => {
+
+    document.body.classList.toggle("dark-mode");
+
+    const icon = themeBtn.querySelector("i");
+
+    if(document.body.classList.contains("dark-mode")){
+
+        icon.classList.remove("fa-moon");
+
+        icon.classList.add("fa-sun");
+
+    }
+
+    else{
+
+        icon.classList.remove("fa-sun");
+
+        icon.classList.add("fa-moon");
+
+    }
+
+});
+
+const scrollBtn = document.getElementById("scrollTop");
+
+window.onscroll = function(){
+
+    if(document.documentElement.scrollTop > 200){
+
+        scrollBtn.style.display = "block";
+
+    }
+
+    else{
+
+        scrollBtn.style.display = "none";
+
+    }
+
+};
+
+scrollBtn.onclick = function(){
+
+    window.scrollTo({
+
+        top:0,
+
+        behavior:"smooth"
+
+    });
+
+};
+
+</script>
+
+<!-- Page Specific JS -->
+
+{% block js %}
+
+{% endblock %}
+
+</body>
+
+</html>
